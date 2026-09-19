@@ -1,4 +1,4 @@
-﻿/**
+/**
  * DataVault AI — Compact Contract Test Suite
  * tests/counter.test.ts
  *
@@ -19,7 +19,7 @@ import {
 import {
   Contract,
   ledger,
-} from "../contracts/managed/counter/contract/index.js";
+} from "../managed/counter/contract/index.js";
 
 // ─────────────────────────────────────────────────────────────
 // Helper: initialise a fresh contract state for each test
