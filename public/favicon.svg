@@ -1,0 +1,17 @@
+<svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="vaultGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stopColor="#06b6d4" />
+      <stop offset="50%" stopColor="#3b82f6" />
+      <stop offset="100%" stopColor="#8b5cf6" />
+    </linearGradient>
+    <linearGradient id="coreGradient" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stopColor="#10b981" />
+      <stop offset="100%" stopColor="#06b6d4" />
+    </linearGradient>
+  </defs>
+  <polygon points="50,4 90,26 90,74 50,96 10,74 10,26" stroke="url(#vaultGradient)" stroke-width="4" stroke-linejoin="round" fill="#030712"/>
+  <rect x="38" y="46" width="24" height="18" rx="4" fill="url(#coreGradient)"/>
+  <path d="M43 46 V40 C43 36.134 46.134 33 50 33 C53.866 33 57 36.134 57 40 V46" stroke="#06b6d4" stroke-width="3.5" stroke-linecap="round" fill="none"/>
+  <circle cx="50" cy="53" r="2.5" fill="#030712"/>
+</svg>
