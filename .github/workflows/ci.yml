@@ -1,0 +1,41 @@
+﻿name: DataVault AI CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    name: Compile and Test
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Compact CLI
+        run: |
+          curl --proto '=https' --tlsv1.2 -LsSf \
+            https://github.com/midnightntwrk/compact/releases/latest/download/compact-installer.sh | sh
+          source $HOME/.local/bin/env
+          compact update
+          echo "$HOME/.compact/bin" >> $GITHUB_PATH
+
+      - name: Compile Compact contract
+        run: |
+          source $HOME/.local/bin/env
+          compact compile contracts/counter.compact contracts/managed/counter
+
+      - name: Run tests
+        run: npm test
