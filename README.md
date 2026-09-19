@@ -2,19 +2,19 @@
 
 [![CI](https://github.com/Rajdeep-Biswas7/DataVault-AI/actions/workflows/ci.yml/badge.svg)](https://github.com/Rajdeep-Biswas7/DataVault-AI/actions/workflows/ci.yml)
 [![Network: Midnight Preprod](https://img.shields.io/badge/Network-Midnight_Preprod-6366f1?style=flat&logo=blockchain&logoColor=white)](https://explorer.1am.xyz/contract/mn_addr_preprod1w7hatkynrx7yzleqse06cvz4dcctsw66xm3387h4vsxkqz5dmq2q7sx7ne?network=preprod)
-[![Live DApp: Production](https://img.shields.io/badge/Deployment-Live_DApp-10b981?style=flat&logo=vercel&logoColor=white)](https://github.com/Rajdeep-Biswas7/DataVault-AI)
+[![Live DApp: Production](https://img.shields.io/badge/Deployment-Live_DApp-10b981?style=flat&logo=vercel&logoColor=white)](https://data-vault-ai-kappa.vercel.app/)
 [![Smart Contract: Compact](https://img.shields.io/badge/Language-Compact_0.34.0-purple?style=flat)](https://docs.midnight.network)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
 > A decentralized, privacy-preserving confidential data clean room where organizations allow AI analysis on sensitive datasets without exposing the underlying raw data to any external party. Built natively on Midnight using Compact smart contracts and zero-knowledge proofs.
 
-[🚀 Live DApp](#live-demo) • [🎬 Video Walkthrough](#demo-video) • [📜 Smart Contracts](#contract-address) • [💡 Architecture](#what-this-does) • [🔒 Privacy Model](#privacy-model) • [🛡️ Privacy Claim](#privacy-claim) • [✨ Key Innovations](#key-features--innovations) • [🛠️ Tech Stack](#tech-stack) • [💻 Local Setup](#setup--run-locally) • [🧪 Test Suite](#run-tests) • [⚙️ CI/CD Pipeline](#cicd) • [📋 Product Proposal](#product-proposal) • [✅ Submission Checklist](#submission-checklist)
+[🚀 Live DApp](https://data-vault-ai-kappa.vercel.app/) • [🎬 Video Walkthrough](#demo-video) • [📜 Smart Contracts](#contract-address) • [💡 Architecture](#what-this-does) • [🔒 Privacy Model](#privacy-model) • [🛡️ Privacy Claim](#privacy-claim) • [✨ Key Innovations](#key-features--innovations) • [🛠️ Tech Stack](#tech-stack) • [💻 Local Setup](#setup--run-locally) • [🧪 Test Suite](#run-tests) • [⚙️ CI/CD Pipeline](#cicd) • [📋 Product Proposal](#product-proposal) • [✅ Submission Checklist](#submission-checklist)
 
 ---
 
 ## Live Demo
 
-- 🌐 **Interactive Web DApp:** [https://github.com/Rajdeep-Biswas7/DataVault-AI](https://github.com/Rajdeep-Biswas7/DataVault-AI)
+- 🌐 **Interactive Web DApp:** [https://data-vault-ai-kappa.vercel.app/](https://data-vault-ai-kappa.vercel.app/)
 - 🎬 **Video Walkthrough:** [https://www.youtube.com/watch?v=hsI-7lmRVJc](https://www.youtube.com/watch?v=hsI-7lmRVJc)
 - 📜 **Deployed Smart Contract:** [View on 1AM Preprod Explorer ↗](https://explorer.1am.xyz/contract/mn_addr_preprod1w7hatkynrx7yzleqse06cvz4dcctsw66xm3387h4vsxkqz5dmq2q7sx7ne?network=preprod)
 
@@ -251,9 +251,10 @@ See [PROPOSAL.md](PROPOSAL.md) for the complete product proposal scoping the **C
 ## Submission Checklist
 
 - [✓] **Public GitHub Repository:** Complete open-source repository with full documentation, architecture diagrams, and setup instructions ([https://github.com/Rajdeep-Biswas7/DataVault-AI](https://github.com/Rajdeep-Biswas7/DataVault-AI)).
-- [✓] **Live Demo Link + Contract Address:** Live interactive interface with verified contract on Midnight Preprod (`mn_addr_preprod1w7hatkynrx7yzleqse06cvz4dcctsw66xm3387h4vsxkqz5dmq2q7sx7ne`).
+- [✓] **Live DApp Deployment:** Deployed and accessible on Vercel at [https://data-vault-ai-kappa.vercel.app/](https://data-vault-ai-kappa.vercel.app/).
+- [✓] **Verified Midnight Preprod Contract:** `mn_addr_preprod1w7hatkynrx7yzleqse06cvz4dcctsw66xm3387h4vsxkqz5dmq2q7sx7ne`.
 - [✓] **CI/CD Pipeline:** Automated GitHub Actions workflow ([`.github/workflows/ci.yml`](.github/workflows/ci.yml)) with green passing status.
 - [✓] **Demo Video of the MVP:** [Watch DataVault AI Demo Walkthrough on YouTube](https://www.youtube.com/watch?v=hsI-7lmRVJc).
 - [✓] **11 Passing Tests:** Covering circuit logic, state transitions, and zero-knowledge privacy guarantees.
-- [✓] **Meaningful Commits:** 17+ semantic commits across contract development, test suites, cryptographic circuits, and frontend UI.
+- [✓] **Meaningful Commits:** 19+ semantic commits across contract development, test suites, cryptographic circuits, and frontend UI.
 - [✓] **Complete Product Proposal:** Defined in [PROPOSAL.md](PROPOSAL.md) solving real-world AI data collaboration challenges.

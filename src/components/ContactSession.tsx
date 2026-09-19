@@ -192,6 +192,19 @@ export const ContactSession: React.FC = () => {
 
               <div className="pt-3 border-t border-slate-200 dark:border-slate-800 space-y-2.5">
                 <a
+                  href="https://data-vault-ai-kappa.vercel.app/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center justify-between p-3 rounded-xl bg-gradient-to-r from-emerald-500/10 to-teal-500/10 border border-emerald-500/30 hover:border-emerald-500 text-xs text-emerald-700 dark:text-emerald-300 hover:text-emerald-900 dark:hover:text-white transition group shadow-sm"
+                >
+                  <div className="flex items-center gap-2.5">
+                    <Globe className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+                    <span className="font-bold">Live Production DApp (Vercel)</span>
+                  </div>
+                  <ExternalLink className="w-3.5 h-3.5 text-emerald-500 transition" />
+                </a>
+
+                <a
                   href="https://github.com/Rajdeep-Biswas7/DataVault-AI"
                   target="_blank"
                   rel="noopener noreferrer"
