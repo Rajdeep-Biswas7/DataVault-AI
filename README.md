@@ -8,8 +8,17 @@ DataVault AI demonstrates a confidential data clean-room workflow for organizati
 
 The project combines a React/Vite demonstration interface with a Compact smart contract model for Midnight Network. It is intended for experimentation, architecture validation, and builder-challenge demonstration rather than production deployment.
 
+## Demo Video & Links
+
+- **YouTube Walkthrough (1-Minute Demo)**: [https://www.youtube.com/watch?v=hsI-7lmRVJc](https://www.youtube.com/watch?v=hsI-7lmRVJc)
+- **Live Demo Interface**: [GitHub Repository / Live Demo](https://github.com/Rajdeep-Biswas7/DataVault-AI)
+- **Midnight Preprod Contract Address**: `mn_addr_preprod1w7hatkynrx7yzleqse06cvz4dcctsw66xm3387h4vsxkqz5dmq2q7sx7ne`
+
+[![Watch DataVault AI Demo on YouTube](https://img.youtube.com/vi/hsI-7lmRVJc/maxresdefault.jpg)](https://www.youtube.com/watch?v=hsI-7lmRVJc)
+
 ## Contents
 
+- [Demo video & links](#demo-video--links)
 - [Product overview](#product-overview)
 - [Key capabilities](#key-capabilities)
 - [Privacy model](#privacy-model)
