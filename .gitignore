@@ -1,0 +1,19 @@
+﻿# Dependencies
+node_modules/
+
+# Build output
+dist/
+
+# Proof server logs
+*.log
+
+# Environment files
+.env
+.env.local
+
+# Hello-world demo (separate git repo)
+mn-demo/
+
+# OS
+.DS_Store
+Thumbs.db

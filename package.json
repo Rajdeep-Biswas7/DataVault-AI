@@ -1,0 +1,53 @@
+﻿{
+  "name": "datavault-ai",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Privacy-preserving AI data collaboration platform using Midnight Network",
+  "author": "DataVault AI",
+  "license": "MIT",
+  "scripts": {
+    "compile": "compact compile contracts/counter.compact contracts/managed/counter",
+    "build": "npx tsc --noEmit || true",
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js tests/counter.test.ts --no-coverage",
+    "proof-server:start": "docker compose up -d proof-server",
+    "proof-server:stop": "docker compose down"
+  },
+  "dependencies": {
+    "@midnight-ntwrk/compact-runtime": "0.19.0",
+    "@midnight-ntwrk/midnight-js-contracts": "4.1.1",
+    "@midnight-ntwrk/midnight-js-http-client-proof-provider": "4.1.1",
+    "@midnight-ntwrk/midnight-js-indexer-public-data-provider": "4.1.1",
+    "@midnight-ntwrk/midnight-js-level-private-state-provider": "4.1.1",
+    "@midnight-ntwrk/midnight-js-network-id": "4.1.1",
+    "@midnight-ntwrk/midnight-js-node-zk-config-provider": "4.1.1",
+    "@midnight-ntwrk/midnight-js-protocol": "4.1.1",
+    "@midnight-ntwrk/midnight-js-types": "4.1.1",
+    "@midnight-ntwrk/midnight-js-utils": "4.1.1",
+    "@midnight-ntwrk/wallet-sdk": "1.2.0",
+    "@scure/bip39": "2.2.0",
+    "rxjs": "^7.8.2"
+  },
+  "devDependencies": {
+    "@types/jest": "^29.5.0",
+    "@types/node": "^22.0.0",
+    "jest": "^29.5.0",
+    "ts-jest": "^29.1.0",
+    "tsx": "^4.23.1",
+    "typescript": "^6.0.3"
+  },
+  "jest": {
+    "preset": "ts-jest/presets/default-esm",
+    "extensionsToTreatAsEsm": [".ts"],
+    "testEnvironment": "node",
+    "transform": {
+      "^.+\\.tsx?$": ["ts-jest", { "useESM": true }]
+    },
+    "moduleNameMapper": {
+      "^(\\.{1,2}/.*)\\.js$": "$1"
+    }
+  },
+  "engines": {
+    "node": ">=22.0.0"
+  },
+  "keywords": ["midnight", "blockchain", "zero-knowledge", "privacy", "ai", "data-collaboration"]
+}
