@@ -242,7 +242,7 @@ Continuous Integration is configured via GitHub Actions in [`.github/workflows/c
 
 ---
 
-## Product Proposal
+## Product Proposal.
 
 See [PROPOSAL.md](PROPOSAL.md) for the complete product proposal scoping the **Confidential Data Clean Room** for Midnight Mainnet.
 
