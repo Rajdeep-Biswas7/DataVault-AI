@@ -1,10 +1,105 @@
 @import "tailwindcss";
 
-:root {
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
-  color-scheme: dark;
-  background-color: #020617;
-  color: #f8fafc;
+@layer base {
+  :root {
+    --bg-page: #f8fafc;
+    --bg-card: rgba(255, 255, 255, 0.85);
+    --bg-card-subtle: #f1f5f9;
+    --bg-input: #ffffff;
+    --border-color: rgba(226, 232, 240, 0.9);
+    --border-focus: #0284c7;
+    --text-primary: #0f172a;
+    --text-secondary: #334155;
+    --text-muted: #64748b;
+    --badge-bg: #e0f2fe;
+    --badge-text: #0369a1;
+    --badge-border: #bae6fd;
+    --glow-cyan: rgba(6, 182, 212, 0.15);
+    --glow-indigo: rgba(99, 102, 241, 0.15);
+    --shadow-card: 0 10px 30px -10px rgba(0, 0, 0, 0.06), 0 4px 6px -2px rgba(0, 0, 0, 0.02);
+  }
+
+  .dark {
+    --bg-page: #030712;
+    --bg-card: rgba(15, 23, 42, 0.75);
+    --bg-card-subtle: #090e1a;
+    --bg-input: #050a14;
+    --border-color: rgba(30, 41, 59, 0.8);
+    --border-focus: #38bdf8;
+    --text-primary: #f8fafc;
+    --text-secondary: #cbd5e1;
+    --text-muted: #64748b;
+    --badge-bg: rgba(6, 182, 212, 0.12);
+    --badge-text: #38bdf8;
+    --badge-border: rgba(6, 182, 212, 0.3);
+    --glow-cyan: rgba(6, 182, 212, 0.25);
+    --glow-indigo: rgba(99, 102, 241, 0.25);
+    --shadow-card: 0 20px 40px -15px rgba(0, 0, 0, 0.5), 0 0 15px -3px rgba(6, 182, 212, 0.1);
+  }
+
+  body {
+    margin: 0;
+    min-width: 320px;
+    min-height: 100vh;
+    background-color: var(--bg-page);
+    color: var(--text-primary);
+    font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+}
+
+/* Custom High-Tech Glass and Glow Utilities */
+.glass-panel {
+  background: var(--bg-card);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-card);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.glass-panel:hover {
+  border-color: var(--badge-border);
+}
+
+.glow-cyan {
+  box-shadow: 0 0 30px var(--glow-cyan);
+}
+
+.glow-indigo {
+  box-shadow: 0 0 30px var(--glow-indigo);
+}
+
+.gradient-border {
+  position: relative;
+}
+
+.gradient-border::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(135deg, rgba(6, 182, 212, 0.5), rgba(99, 102, 241, 0.5));
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+/* Custom Scrollbars */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg-page);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--badge-border);
 }

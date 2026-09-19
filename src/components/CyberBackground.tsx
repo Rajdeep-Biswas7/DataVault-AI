@@ -1,6 +1,10 @@
 import React, { useEffect, useRef } from "react";
 
-export const CyberBackground: React.FC = () => {
+interface CyberBackgroundProps {
+  theme: "light" | "dark";
+}
+
+export const CyberBackground: React.FC<CyberBackgroundProps> = ({ theme }) => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
   useEffect(() => {
@@ -20,7 +24,6 @@ export const CyberBackground: React.FC = () => {
     };
     window.addEventListener("resize", handleResize);
 
-    // Particle nodes definition
     interface Particle {
       x: number;
       y: number;
@@ -29,96 +32,96 @@ export const CyberBackground: React.FC = () => {
       radius: number;
       color: string;
       alpha: number;
-      pulseSpeed: number;
     }
 
     const particles: Particle[] = [];
-    const particleCount = Math.min(Math.floor((width * height) / 14000), 75);
-    const colors = ["#06b6d4", "#3b82f6", "#8b5cf6", "#10b981"];
+    const particleCount = Math.min(Math.floor((width * height) / 12000), 80);
+    const colors =
+      theme === "light"
+        ? ["#0284c7", "#6366f1", "#0d9488", "#8b5cf6"]
+        : ["#06b6d4", "#3b82f6", "#8b5cf6", "#10b981"];
 
     for (let i = 0; i < particleCount; i++) {
       particles.push({
         x: Math.random() * width,
         y: Math.random() * height,
-        vx: (Math.random() - 0.5) * 0.7,
-        vy: (Math.random() - 0.5) * 0.7,
+        vx: (Math.random() - 0.5) * 0.6,
+        vy: (Math.random() - 0.5) * 0.6,
         radius: Math.random() * 2 + 1,
         color: colors[Math.floor(Math.random() * colors.length)],
-        alpha: Math.random() * 0.5 + 0.2,
-        pulseSpeed: Math.random() * 0.02 + 0.01,
+        alpha: theme === "light" ? Math.random() * 0.35 + 0.15 : Math.random() * 0.5 + 0.2,
       });
     }
 
-    // Cryptographic symbols floating
-    interface HexSymbol {
+    interface FloatingCode {
       x: number;
       y: number;
       text: string;
       speed: number;
       opacity: number;
     }
-    const hexSymbols: HexSymbol[] = [];
-    const hexSnippets = [
-      "0x4f3c", "ZK_SNARK", "MIDNIGHT", "COMPACT", "DISCLOSE",
-      "W_KEY", "SHA-256", "PREPROD", "CIRCUIT", "ENCLAVE", "0x8168"
+    const codes: FloatingCode[] = [];
+    const codeWords = [
+      "ZK_VERIFIED", "DISCLOSE()", "COMPACT_v0.34", "PREPROD",
+      "PRIVATE_WITNESS", "0x4f3c", "ENCLAVE_ACTIVE", "ZERO_DATA_LEAK"
     ];
-    for (let i = 0; i < 20; i++) {
-      hexSymbols.push({
+    for (let i = 0; i < 18; i++) {
+      codes.push({
         x: Math.random() * width,
         y: Math.random() * height,
-        text: hexSnippets[Math.floor(Math.random() * hexSnippets.length)],
-        speed: Math.random() * 0.4 + 0.1,
-        opacity: Math.random() * 0.18 + 0.05,
+        text: codeWords[Math.floor(Math.random() * codeWords.length)],
+        speed: Math.random() * 0.35 + 0.1,
+        opacity: theme === "light" ? Math.random() * 0.12 + 0.04 : Math.random() * 0.18 + 0.05,
       });
     }
 
     let mouseX = -1000;
     let mouseY = -1000;
-
     const handleMouseMove = (e: MouseEvent) => {
       mouseX = e.clientX;
       mouseY = e.clientY;
     };
     window.addEventListener("mousemove", handleMouseMove);
 
-    // Animation Loop
     let time = 0;
     const render = () => {
       time += 0.015;
       ctx.clearRect(0, 0, width, height);
 
-      // 1. Draw floating cryptographic hex text
-      ctx.font = "10px monospace";
-      hexSymbols.forEach((s) => {
-        s.y += s.speed;
-        if (s.y > height + 20) {
-          s.y = -20;
-          s.x = Math.random() * width;
+      // 1. Draw floating code strings
+      ctx.font = "10px JetBrains Mono, monospace";
+      codes.forEach((c) => {
+        c.y += c.speed;
+        if (c.y > height + 20) {
+          c.y = -20;
+          c.x = Math.random() * width;
         }
-        ctx.fillStyle = `rgba(6, 182, 212, ${s.opacity})`;
-        ctx.fillText(s.text, s.x, s.y);
+        ctx.fillStyle =
+          theme === "light"
+            ? `rgba(2, 132, 199, ${c.opacity})`
+            : `rgba(6, 182, 212, ${c.opacity})`;
+        ctx.fillText(c.text, c.x, c.y);
       });
 
-      // 2. Update and draw particles with neural connections
+      // 2. Draw neural particle mesh
       for (let i = 0; i < particles.length; i++) {
         const p = particles[i];
         p.x += p.vx;
         p.y += p.vy;
 
-        // Bounce at boundaries
         if (p.x < 0 || p.x > width) p.vx *= -1;
         if (p.y < 0 || p.y > height) p.vy *= -1;
 
-        // Mouse interaction: gentle repulsion
+        // Mouse gentle repulsion
         const dxMouse = p.x - mouseX;
         const dyMouse = p.y - mouseY;
         const distMouse = Math.sqrt(dxMouse * dxMouse + dyMouse * dyMouse);
-        if (distMouse < 120) {
+        if (distMouse < 110) {
           p.x += (dxMouse / distMouse) * 1.5;
           p.y += (dyMouse / distMouse) * 1.5;
         }
 
-        // Draw particle node
+        // Draw particle
         ctx.beginPath();
         const pulsedAlpha = p.alpha * (0.8 + 0.2 * Math.sin(time + i));
         ctx.fillStyle = p.color;
@@ -136,7 +139,8 @@ export const CyberBackground: React.FC = () => {
           if (dist < 130) {
             ctx.beginPath();
             ctx.strokeStyle = p.color;
-            ctx.globalAlpha = (1 - dist / 130) * 0.18;
+            ctx.globalAlpha =
+              (1 - dist / 130) * (theme === "light" ? 0.12 : 0.18);
             ctx.lineWidth = 0.8;
             ctx.moveTo(p.x, p.y);
             ctx.lineTo(p2.x, p2.y);
@@ -156,23 +160,30 @@ export const CyberBackground: React.FC = () => {
       window.removeEventListener("mousemove", handleMouseMove);
       cancelAnimationFrame(animationFrameId);
     };
-  }, []);
+  }, [theme]);
 
   return (
-    <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
-      {/* Deep Cyber Ambient Glow Gradients */}
-      <div className="absolute top-[-15%] left-[10%] w-[600px] h-[600px] bg-cyan-600/10 rounded-full blur-[140px] animate-pulse" />
-      <div className="absolute top-[30%] right-[-10%] w-[650px] h-[650px] bg-indigo-600/10 rounded-full blur-[150px]" />
-      <div className="absolute bottom-[-15%] left-[30%] w-[700px] h-[700px] bg-purple-700/10 rounded-full blur-[160px]" />
+    <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden transition-colors duration-500">
+      {/* Radiant Atmospheric Glow Orbs */}
+      {theme === "light" ? (
+        <>
+          <div className="absolute top-[-10%] left-[10%] w-[650px] h-[650px] bg-cyan-200/40 rounded-full blur-[140px]" />
+          <div className="absolute top-[25%] right-[-5%] w-[700px] h-[700px] bg-indigo-200/35 rounded-full blur-[150px]" />
+          <div className="absolute bottom-[-10%] left-[25%] w-[750px] h-[750px] bg-sky-100/60 rounded-full blur-[160px]" />
+          <div className="absolute inset-0 bg-[linear-gradient(to_right,#cbd5e120_1px,transparent_1px),linear-gradient(to_bottom,#cbd5e120_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_40%,#000_70%,transparent_100%)]" />
+        </>
+      ) : (
+        <>
+          <div className="absolute top-[-15%] left-[10%] w-[600px] h-[600px] bg-cyan-600/12 rounded-full blur-[140px] animate-pulse" />
+          <div className="absolute top-[30%] right-[-10%] w-[650px] h-[650px] bg-indigo-600/12 rounded-full blur-[150px]" />
+          <div className="absolute bottom-[-15%] left-[30%] w-[700px] h-[700px] bg-purple-700/10 rounded-full blur-[160px]" />
+          <div className="absolute inset-0 bg-[linear-gradient(to_right,#1e293b15_1px,transparent_1px),linear-gradient(to_bottom,#1e293b15_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_40%,#000_70%,transparent_100%)]" />
+          <div className="absolute inset-0 bg-[repeating-linear-gradient(0deg,transparent,transparent_2px,rgba(0,0,0,0.12)_2px,rgba(0,0,0,0.12)_4px)] opacity-25 pointer-events-none" />
+        </>
+      )}
 
-      {/* Cyber Grid Pattern */}
-      <div className="absolute inset-0 bg-[linear-gradient(to_right,#1e293b15_1px,transparent_1px),linear-gradient(to_bottom,#1e293b15_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_40%,#000_70%,transparent_100%)]" />
-
-      {/* Dynamic HTML5 Canvas */}
+      {/* Dynamic Canvas */}
       <canvas ref={canvasRef} className="absolute inset-0 block w-full h-full" />
-
-      {/* High-tech Subtle Scanline Filter */}
-      <div className="absolute inset-0 bg-[repeating-linear-gradient(0deg,transparent,transparent_2px,rgba(0,0,0,0.15)_2px,rgba(0,0,0,0.15)_4px)] opacity-30 pointer-events-none" />
     </div>
   );
 };

@@ -7,231 +7,212 @@ import {
   ArrowRight,
   Sparkles,
   Lock,
-  EyeOff,
-  Flame,
   Binary,
   Layers,
   CheckCircle2,
   XCircle,
+  Zap,
 } from "lucide-react";
 import { VaultIcon } from "./VaultIcon";
-import { PREPROD_CONTRACT_ADDRESS } from "../hooks/useDataVault";
+import { PrivacyXRayLens } from "./PrivacyXRayLens";
 
 interface HeroSectionProps {
   onLaunchDemo: () => void;
   onExploreAudit: () => void;
+  theme: "light" | "dark";
 }
 
-export const HeroSection: React.FC<HeroSectionProps> = ({ onLaunchDemo, onExploreAudit }) => {
-  const [activeTab, setActiveTab] = useState<"solution" | "problem">("solution");
+export const HeroSection: React.FC<HeroSectionProps> = ({ onLaunchDemo, onExploreAudit, theme }) => {
+  const [activeStep, setActiveStep] = useState<number>(1);
+
+  const steps = [
+    {
+      id: 1,
+      title: "1. Encrypted Ingestion",
+      desc: "Hospital or Bank stores confidential records in their local enclave. Raw PII never leaves internal servers.",
+      icon: Database,
+      badge: "Private Enclave",
+    },
+    {
+      id: 2,
+      title: "2. Compact ZK Rules",
+      desc: "Midnight smart contract evaluates policy keys and differential privacy parameters as private witnesses.",
+      icon: Lock,
+      badge: "Compact v0.34.0",
+    },
+    {
+      id: 3,
+      title: "3. Enclave AI Compute",
+      desc: "Approved ML algorithm executes inference over shielded features without exporting raw data rows.",
+      icon: Cpu,
+      badge: "Confidential AI",
+    },
+    {
+      id: 4,
+      title: "4. Verified Insights",
+      desc: "Only aggregate statistics leave the vault. Midnight Preprod verifies the computation proof on-chain.",
+      icon: ShieldCheck,
+      badge: "Zero-Knowledge Verifiable",
+    },
+  ];
 
   return (
-    <section className="relative pt-6 pb-12 overflow-hidden">
-      {/* Top Protocol Status Pill */}
-      <div className="flex items-center justify-center mb-6">
-        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-cyan-950/60 border border-cyan-500/30 text-cyan-300 text-xs font-mono shadow-lg shadow-cyan-500/10 backdrop-blur-md">
-          <span className="w-2 h-2 rounded-full bg-cyan-400 animate-ping" />
-          <span>Midnight Preprod Active</span>
-          <span className="text-slate-600">|</span>
-          <span className="text-slate-300">Confidential Clean Room v1.0</span>
-          <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+    <section className="relative pt-6 pb-8 overflow-hidden">
+      {/* Top Status Pill */}
+      <div className="flex items-center justify-center mb-5">
+        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-cyan-50 dark:bg-cyan-950/70 border border-cyan-300 dark:border-cyan-800 text-cyan-800 dark:text-cyan-300 text-xs font-mono font-semibold shadow-sm backdrop-blur-md">
+          <span className="w-2 h-2 rounded-full bg-cyan-500 animate-ping" />
+          <span>Midnight Preprod Live</span>
+          <span className="text-slate-300 dark:text-slate-700">|</span>
+          <span>Zero-Knowledge Data Clean Room</span>
+          <Sparkles className="w-3.5 h-3.5 text-amber-500" />
         </div>
       </div>
 
       {/* Main Headline */}
       <div className="text-center max-w-4xl mx-auto px-4">
-        <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-white leading-tight">
+        <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black tracking-tight text-slate-900 dark:text-white leading-[1.15]">
           AI Needs Sensitive Data.{" "}
-          <span className="block mt-1 bg-gradient-to-r from-cyan-400 via-indigo-300 to-purple-400 bg-clip-text text-transparent drop-shadow-sm">
-            Organizations Cannot Risk Exposing It.
+          <span className="block mt-2 bg-gradient-to-r from-cyan-600 via-blue-600 to-indigo-600 dark:from-cyan-400 dark:via-indigo-300 dark:to-purple-400 bg-clip-text text-transparent">
+            Institutions Cannot Risk Leaking It.
           </span>
         </h1>
-        <p className="mt-4 text-base sm:text-lg text-slate-300 max-w-2xl mx-auto leading-relaxed">
-          <strong className="text-cyan-300 font-semibold">DataVault AI</strong> is a privacy-preserving AI collaboration platform built on{" "}
-          <span className="text-indigo-300 font-semibold">Midnight</span>. Run cutting-edge AI models over confidential hospital, financial, or proprietary records with{" "}
-          <span className="text-emerald-300 font-semibold underline decoration-emerald-500/50 decoration-2">
-            Zero Raw Data Ever Leaving The Vault
-          </span>.
+        <p className="mt-5 text-base sm:text-lg text-slate-700 dark:text-slate-300 max-w-2xl mx-auto leading-relaxed">
+          <strong className="text-cyan-700 dark:text-cyan-300 font-bold">DataVault AI</strong> makes confidential AI collaboration possible on <span className="font-semibold text-indigo-700 dark:text-indigo-300">Midnight</span>. Organizations can allow advanced AI algorithms to analyze sensitive datasets with <span className="font-bold underline decoration-cyan-500 decoration-2">absolute mathematical zero-exposure guarantees</span>.
         </p>
 
         {/* Action Buttons */}
         <div className="mt-7 flex flex-wrap items-center justify-center gap-3 sm:gap-4">
           <button
             onClick={onLaunchDemo}
-            className="group flex items-center gap-2.5 px-6 py-3 rounded-xl bg-gradient-to-r from-cyan-500 via-blue-600 to-indigo-600 hover:from-cyan-400 hover:to-indigo-500 text-white font-semibold text-sm shadow-xl shadow-cyan-500/25 transition-all transform hover:-translate-y-0.5 active:translate-y-0"
+            className="group flex items-center gap-2.5 px-6 py-3.5 rounded-2xl bg-gradient-to-r from-cyan-600 via-blue-600 to-indigo-600 hover:from-cyan-500 hover:to-indigo-500 text-white font-bold text-sm shadow-xl shadow-cyan-500/25 transition-all transform hover:-translate-y-0.5 active:translate-y-0"
           >
             <VaultIcon className="w-5 h-5" />
-            <span>Launch Live Clean Room</span>
+            <span>Launch Clean Room Studio</span>
             <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
           </button>
 
           <button
             onClick={onExploreAudit}
-            className="flex items-center gap-2 px-5 py-3 rounded-xl bg-slate-900/90 hover:bg-slate-800 text-slate-200 font-medium text-sm border border-slate-700 hover:border-slate-600 transition backdrop-blur-md"
+            className="flex items-center gap-2 px-5 py-3.5 rounded-2xl glass-panel text-slate-800 dark:text-slate-200 font-semibold text-sm hover:border-cyan-500/50 transition-all"
           >
-            <Binary className="w-4 h-4 text-cyan-400" />
-            <span>View Midnight ZK Proofs</span>
+            <Binary className="w-4 h-4 text-cyan-600 dark:text-cyan-400" />
+            <span>Inspect Midnight ZK Proofs</span>
           </button>
         </div>
       </div>
 
-      {/* Interactive Problem vs Solution Comparison Box */}
-      <div className="mt-12 max-w-5xl mx-auto px-4">
-        <div className="bg-slate-900/90 border border-slate-800 rounded-3xl p-5 sm:p-8 shadow-2xl backdrop-blur-xl">
-          {/* Header Toggle */}
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-slate-800">
+      {/* Interactive Privacy X-Ray Lens Component */}
+      <PrivacyXRayLens theme={theme} />
+
+      {/* Interactive 4-Step Collaborative Pipeline */}
+      <div className="max-w-5xl mx-auto px-4 mt-6">
+        <div className="glass-panel rounded-3xl p-6 sm:p-8">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6 pb-4 border-b border-slate-200 dark:border-slate-800">
             <div>
-              <span className="text-xs font-mono font-semibold uppercase tracking-wider text-cyan-400 block mb-1">
-                The Core Innovation
+              <span className="text-xs font-mono font-bold uppercase tracking-wider text-cyan-600 dark:text-cyan-400 block mb-1">
+                Cryptographic Workflow
               </span>
-              <h3 className="text-xl font-bold text-white">
-                How DataVault AI Solves The Collaboration Deadlock
+              <h3 className="text-xl font-bold text-slate-900 dark:text-white">
+                How Data Moves Without Leaving The Vault
               </h3>
             </div>
-
-            <div className="flex bg-slate-950 p-1 rounded-xl border border-slate-800 w-fit">
-              <button
-                onClick={() => setActiveTab("solution")}
-                className={`flex items-center gap-1.5 px-4 py-2 rounded-lg text-xs font-semibold transition ${
-                  activeTab === "solution"
-                    ? "bg-gradient-to-r from-cyan-600 to-indigo-600 text-white shadow-md shadow-cyan-500/20"
-                    : "text-slate-400 hover:text-white"
-                }`}
-              >
-                <ShieldCheck className="w-4 h-4" />
-                DataVault AI (Zero-Knowledge)
-              </button>
-              <button
-                onClick={() => setActiveTab("problem")}
-                className={`flex items-center gap-1.5 px-4 py-2 rounded-lg text-xs font-semibold transition ${
-                  activeTab === "problem"
-                    ? "bg-rose-950 text-rose-300 border border-rose-800/80 shadow"
-                    : "text-slate-400 hover:text-white"
-                }`}
-              >
-                <ShieldAlert className="w-4 h-4" />
-                Traditional Sharing (Dangerous)
-              </button>
-            </div>
+            <span className="text-xs text-slate-500 font-mono">
+              Click any stage to inspect logic:
+            </span>
           </div>
 
-          {/* Comparison Content */}
-          <div className="pt-6">
-            {activeTab === "solution" ? (
-              <div className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div className="p-4 rounded-2xl bg-cyan-950/30 border border-cyan-800/40">
-                    <div className="w-9 h-9 rounded-xl bg-cyan-900/50 flex items-center justify-center text-cyan-400 mb-3">
-                      <Database className="w-5 h-5" />
+          {/* Interactive Steps Bar */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
+            {steps.map((s) => {
+              const Icon = s.icon;
+              const isSelected = activeStep === s.id;
+              return (
+                <button
+                  key={s.id}
+                  onClick={() => setActiveStep(s.id)}
+                  className={`p-4 rounded-2xl text-left border transition-all ${
+                    isSelected
+                      ? "bg-cyan-50 dark:bg-slate-900 border-cyan-500 shadow-md shadow-cyan-500/15"
+                      : "bg-white/60 dark:bg-slate-950/60 border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700"
+                  }`}
+                >
+                  <div className="flex items-center justify-between mb-2">
+                    <div
+                      className={`w-8 h-8 rounded-xl flex items-center justify-center ${
+                        isSelected
+                          ? "bg-cyan-600 text-white"
+                          : "bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-400"
+                      }`}
+                    >
+                      <Icon className="w-4 h-4" />
                     </div>
-                    <h4 className="text-sm font-bold text-white mb-1">1. Private Vault Ingestion</h4>
-                    <p className="text-xs text-slate-400 leading-relaxed">
-                      Hospital keeps 100,000 patient records in a local zero-knowledge enclave. Names, disease history, and blood reports never leave the hospital premises.
-                    </p>
+                    <span className="text-[10px] font-mono font-semibold px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-400">
+                      {s.badge}
+                    </span>
                   </div>
+                  <h4 className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white">
+                    {s.title}
+                  </h4>
+                </button>
+              );
+            })}
+          </div>
 
-                  <div className="p-4 rounded-2xl bg-indigo-950/30 border border-indigo-800/40">
-                    <div className="w-9 h-9 rounded-xl bg-indigo-900/50 flex items-center justify-center text-indigo-400 mb-3">
-                      <Cpu className="w-5 h-5" />
-                    </div>
-                    <h4 className="text-sm font-bold text-white mb-1">2. Policy Enforced AI</h4>
-                    <p className="text-xs text-slate-400 leading-relaxed">
-                      Researcher requests Disease Prediction. The Compact smart contract validates researcher credentials, locks out raw export, and runs inference under strict rules.
-                    </p>
-                  </div>
-
-                  <div className="p-4 rounded-2xl bg-emerald-950/30 border border-emerald-800/40">
-                    <div className="w-9 h-9 rounded-xl bg-emerald-900/50 flex items-center justify-center text-emerald-400 mb-3">
-                      <CheckCircle2 className="w-5 h-5" />
-                    </div>
-                    <h4 className="text-sm font-bold text-white mb-1">3. Verifiable Output</h4>
-                    <p className="text-xs text-slate-400 leading-relaxed">
-                      Only aggregate statistics (e.g. Risk Cohorts: 1,204 High, 3,510 Med) leave. Midnight preprod verifies the ZK proof of compliant computation without seeing rows.
-                    </p>
-                  </div>
-                </div>
-
-                <div className="p-4 rounded-2xl bg-slate-950 border border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
-                  <div className="flex items-center gap-2 text-slate-300">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
-                    <span><strong>Key Result:</strong> Research accelerates 10x while HIPAA, GDPR & privacy regulations are 100% satisfied.</span>
-                  </div>
-                  <span className="font-mono text-[11px] text-cyan-400 px-3 py-1 rounded bg-slate-900 border border-slate-800">
-                    disclose(recordCount &gt; 0)
-                  </span>
-                </div>
-              </div>
-            ) : (
-              <div className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div className="p-4 rounded-2xl bg-rose-950/20 border border-rose-900/40">
-                    <div className="w-9 h-9 rounded-xl bg-rose-900/40 flex items-center justify-center text-rose-400 mb-3">
-                      <XCircle className="w-5 h-5" />
-                    </div>
-                    <h4 className="text-sm font-bold text-white mb-1">Raw Dataset Export</h4>
-                    <p className="text-xs text-slate-400 leading-relaxed">
-                      Researcher asks for data. Hospital sends raw CSV/SQL dump containing patient names, phone numbers, and diagnoses over insecure channels.
-                    </p>
-                  </div>
-
-                  <div className="p-4 rounded-2xl bg-rose-950/20 border border-rose-900/40">
-                    <div className="w-9 h-9 rounded-xl bg-rose-900/40 flex items-center justify-center text-rose-400 mb-3">
-                      <Flame className="w-5 h-5" />
-                    </div>
-                    <h4 className="text-sm font-bold text-white mb-1">Massive Legal & Breach Risk</h4>
-                    <p className="text-xs text-slate-400 leading-relaxed">
-                      Any external contractor or university breach exposes confidential patient data, resulting in multimillion dollar regulatory fines and PR fallout.
-                    </p>
-                  </div>
-
-                  <div className="p-4 rounded-2xl bg-rose-950/20 border border-rose-900/40">
-                    <div className="w-9 h-9 rounded-xl bg-rose-900/40 flex items-center justify-center text-rose-400 mb-3">
-                      <ShieldAlert className="w-5 h-5" />
-                    </div>
-                    <h4 className="text-sm font-bold text-white mb-1">Complete Stagnation</h4>
-                    <p className="text-xs text-slate-400 leading-relaxed">
-                      Because data cannot safely be shared, 90% of life-saving medical AI and fraud detection models are NEVER built.
-                    </p>
-                  </div>
-                </div>
-
-                <div className="p-4 rounded-2xl bg-rose-950/30 border border-rose-900/50 flex items-center gap-3 text-xs text-rose-200">
-                  <ShieldAlert className="w-4 h-4 text-rose-400 shrink-0" />
-                  <span>
-                    Traditional data sharing forces organizations to choose between <strong>Innovation</strong> or <strong>Compliance</strong>. DataVault AI eliminates this false choice.
-                  </span>
-                </div>
-              </div>
-            )}
+          {/* Expanded Step Details */}
+          <div className="p-4 sm:p-5 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-xs sm:text-sm text-slate-700 dark:text-slate-300 flex items-start gap-3">
+            <Zap className="w-5 h-5 text-cyan-600 dark:text-cyan-400 shrink-0 mt-0.5" />
+            <div>
+              <span className="font-bold text-slate-900 dark:text-white block mb-0.5">
+                Stage {activeStep} Technical Mechanism:
+              </span>
+              <p className="leading-relaxed">{steps[activeStep - 1].desc}</p>
+            </div>
           </div>
         </div>
       </div>
 
       {/* Protocol Metrics Strip */}
-      <div className="mt-12 max-w-5xl mx-auto px-4">
+      <div className="mt-8 max-w-5xl mx-auto px-4">
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
-          <div className="p-4 rounded-2xl bg-slate-900/80 border border-slate-800 text-center backdrop-blur-md">
-            <span className="text-[10px] sm:text-xs text-slate-400 font-mono uppercase block mb-0.5">Raw Records Exposed</span>
-            <span className="text-2xl sm:text-3xl font-extrabold text-emerald-400 font-mono">0</span>
-            <span className="text-[10px] text-slate-500 block mt-0.5">Zero-Knowledge Shielded</span>
+          <div className="glass-panel p-4 rounded-2xl text-center">
+            <span className="text-[10px] sm:text-xs text-slate-500 font-mono uppercase block mb-0.5">
+              Raw Exposure
+            </span>
+            <span className="text-2xl sm:text-3xl font-extrabold text-emerald-600 dark:text-emerald-400 font-mono">
+              0 bytes
+            </span>
+            <span className="text-[10px] text-slate-500 block mt-0.5">Shielded by Midnight</span>
           </div>
 
-          <div className="p-4 rounded-2xl bg-slate-900/80 border border-slate-800 text-center backdrop-blur-md">
-            <span className="text-[10px] sm:text-xs text-slate-400 font-mono uppercase block mb-0.5">Proof Verification</span>
-            <span className="text-2xl sm:text-3xl font-extrabold text-cyan-400 font-mono">&lt;1.0s</span>
-            <span className="text-[10px] text-slate-500 block mt-0.5">Midnight Proof-Server</span>
+          <div className="glass-panel p-4 rounded-2xl text-center">
+            <span className="text-[10px] sm:text-xs text-slate-500 font-mono uppercase block mb-0.5">
+              Proof Generation
+            </span>
+            <span className="text-2xl sm:text-3xl font-extrabold text-cyan-600 dark:text-cyan-400 font-mono">
+              &lt; 1.0s
+            </span>
+            <span className="text-[10px] text-slate-500 block mt-0.5">Proof-Server :6300</span>
           </div>
 
-          <div className="p-4 rounded-2xl bg-slate-900/80 border border-slate-800 text-center backdrop-blur-md">
-            <span className="text-[10px] sm:text-xs text-slate-400 font-mono uppercase block mb-0.5">Compiler Language</span>
-            <span className="text-2xl sm:text-3xl font-extrabold text-indigo-400 font-mono">Compact</span>
+          <div className="glass-panel p-4 rounded-2xl text-center">
+            <span className="text-[10px] sm:text-xs text-slate-500 font-mono uppercase block mb-0.5">
+              Contract Language
+            </span>
+            <span className="text-2xl sm:text-3xl font-extrabold text-indigo-600 dark:text-indigo-400 font-mono">
+              Compact
+            </span>
             <span className="text-[10px] text-slate-500 block mt-0.5">v0.34.0 Native</span>
           </div>
 
-          <div className="p-4 rounded-2xl bg-slate-900/80 border border-slate-800 text-center backdrop-blur-md">
-            <span className="text-[10px] sm:text-xs text-slate-400 font-mono uppercase block mb-0.5">Active Network</span>
-            <span className="text-2xl sm:text-3xl font-extrabold text-purple-400 font-mono">Preprod</span>
-            <span className="text-[10px] text-slate-500 block mt-0.5">Verifiable on-chain</span>
+          <div className="glass-panel p-4 rounded-2xl text-center">
+            <span className="text-[10px] sm:text-xs text-slate-500 font-mono uppercase block mb-0.5">
+              Target Network
+            </span>
+            <span className="text-2xl sm:text-3xl font-extrabold text-purple-600 dark:text-purple-400 font-mono">
+              Preprod
+            </span>
+            <span className="text-[10px] text-slate-500 block mt-0.5">Live Verifiable</span>
           </div>
         </div>
       </div>
