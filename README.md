@@ -189,6 +189,35 @@ npm run proof-server:stop
 
 The current repository does not include a Compose file, so these scripts require a local `proof-server` service definition before they can be used. The browser prototype does not require the service to render the interface.
 
+## Deploying to Vercel
+
+This repository is configured for Vercel as a standard Vite single-page application.
+
+### Dashboard deployment
+
+1. Import the GitHub repository into Vercel.
+2. Keep the detected framework as **Vite**.
+3. Use `npm run build` as the build command.
+4. Use `dist` as the output directory.
+5. Deploy without adding environment variables; the current prototype does not require any.
+
+Vercel will also infer these settings automatically from the repository. The included [`vercel.json`](<D:\DataVault AI\vercel.json>) provides an SPA fallback so browser refreshes and direct navigation resolve to `index.html`.
+
+### CLI deployment
+
+```bash
+npm install -g vercel
+vercel
+```
+
+For a production deployment:
+
+```bash
+vercel --prod
+```
+
+The deployed application remains a client-side prototype: wallet connections, proof generation, and dataset/computation state are simulated in the browser until the live Midnight provider integration is completed.
+
 ## Available commands
 
 | Command | Description |
