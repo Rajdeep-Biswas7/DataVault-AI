@@ -194,6 +194,23 @@ Open [http://localhost:5173](http://localhost:5173) in your browser.
 npm run build
 ```
 
+### 🐳 Running via Docker
+
+You can launch both the **DataVault AI dApp** and the official **Midnight Zero-Knowledge Proof Server** locally using Docker:
+
+```bash
+# 1. Build and start containers
+npm run build
+docker compose up -d
+
+# 2. Access the services:
+#    - DataVault AI dApp:   http://localhost:8080
+#    - Midnight Proof Server: http://localhost:6300
+
+# 3. Stop containers:
+docker compose down
+```
+
 ---
 
 ## Run Tests
