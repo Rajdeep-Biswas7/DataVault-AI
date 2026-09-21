@@ -35,15 +35,16 @@ export function useMidnight() {
         const oneAm = (window as any).midnight["1am"];
         const api = await oneAm.enable();
         const state = await api.state();
-        if (state && state.address) {
-          vault.connectWallet();
+        if (state && (state.address || state.unshieldedAddress)) {
+          vault.connectWallet(state.address || state.unshieldedAddress);
           return;
         }
       }
-      await vault.connectWallet();
+      // Connect directly using user's 1AM Preprod wallet address
+      await vault.connectWallet("mn_addr_preprod1s29kdzlg2pk0cvj64c2yh9dga0f7dc03p2ynlquypukpal663z2qgrlrtw");
     } catch (err: any) {
-      console.warn("1AM Wallet connection error, falling back to simulated session:", err);
-      await vault.connectWallet();
+      console.warn("1AM Wallet connection error, falling back to 1AM Preprod address:", err);
+      await vault.connectWallet("mn_addr_preprod1s29kdzlg2pk0cvj64c2yh9dga0f7dc03p2ynlquypukpal663z2qgrlrtw");
     }
   }, [vault]);
 

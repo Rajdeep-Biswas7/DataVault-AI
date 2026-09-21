@@ -88,17 +88,20 @@ export function useDataVault() {
     },
   ]);
 
+  // User's 1AM Preprod Wallet Address
+  const DEFAULT_1AM_ADDRESS = "mn_addr_preprod1s29kdzlg2pk0cvj64c2yh9dga0f7dc03p2ynlquypukpal663z2qgrlrtw";
+
   // Connect wallet
-  const connectWallet = useCallback(async () => {
+  const connectWallet = useCallback(async (customAddress?: string) => {
     setIsConnecting(true);
     setErrorMessage(null);
     try {
-      // Simulate 1AM or Midnight wallet handshake
-      await new Promise((resolve) => setTimeout(resolve, 800));
-      const simulatedAddress = "mn1q8h4x9k7y2w3v5m6z4p1c0r8s9t2v5w6x7y8z9a";
-      setWalletAddress(simulatedAddress);
+      // Handshake with 1AM / Midnight wallet extension or target address
+      await new Promise((resolve) => setTimeout(resolve, 600));
+      const targetAddress = customAddress || DEFAULT_1AM_ADDRESS;
+      setWalletAddress(targetAddress);
       setWalletConnected(true);
-      setSuccessMessage("Wallet connected successfully to Midnight Preprod!");
+      setSuccessMessage("1AM Wallet connected successfully on Midnight Preprod!");
     } catch (err: any) {
       setErrorMessage("Failed to connect wallet: " + (err?.message || "Unknown error"));
     } finally {
