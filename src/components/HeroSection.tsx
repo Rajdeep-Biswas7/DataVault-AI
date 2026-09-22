@@ -1,17 +1,17 @@
 import React, { useState } from "react";
 import {
-  ShieldAlert,
   ShieldCheck,
   Cpu,
   Database,
   ArrowRight,
   Sparkles,
   Lock,
-  Binary,
-  Layers,
+  ChevronRight,
+  Globe,
+  EyeOff,
+  Terminal,
+  Activity,
   CheckCircle2,
-  XCircle,
-  Zap,
 } from "lucide-react";
 import { VaultIcon } from "./VaultIcon";
 import { PrivacyXRayLens } from "./PrivacyXRayLens";
@@ -22,211 +22,275 @@ interface HeroSectionProps {
   theme: "light" | "dark";
 }
 
-export const HeroSection: React.FC<HeroSectionProps> = ({ onLaunchDemo, onExploreAudit, theme }) => {
-  const [activeStep, setActiveStep] = useState<number>(1);
+export const HeroSection: React.FC<HeroSectionProps> = ({
+  onLaunchDemo,
+  onExploreAudit,
+  theme,
+}) => {
+  const [selectedNetwork, setSelectedNetwork] = useState<"preview" | "preprod" | "mainnet">("preprod");
+  const [sampleModel, setSampleModel] = useState("DiseaseRisk-RandomForest-v1");
+  const [isSimulating, setIsSimulating] = useState(false);
+  const [simulatedProof, setSimulatedProof] = useState<string | null>(null);
 
-  const steps = [
-    {
-      id: 1,
-      title: "1. Encrypted Ingestion",
-      desc: "Hospital or Bank stores confidential records in their local enclave. Raw PII never leaves internal servers.",
-      icon: Database,
-      badge: "Private Enclave",
-    },
-    {
-      id: 2,
-      title: "2. Compact ZK Rules",
-      desc: "Midnight smart contract evaluates policy keys and differential privacy parameters as private witnesses.",
-      icon: Lock,
-      badge: "Compact v0.34.0",
-    },
-    {
-      id: 3,
-      title: "3. Enclave AI Compute",
-      desc: "Approved ML algorithm executes inference over shielded features without exporting raw data rows.",
-      icon: Cpu,
-      badge: "Confidential AI",
-    },
-    {
-      id: 4,
-      title: "4. Verified Insights",
-      desc: "Only aggregate statistics leave the vault. Midnight Preprod verifies the computation proof on-chain.",
-      icon: ShieldCheck,
-      badge: "Zero-Knowledge Verifiable",
-    },
-  ];
+  const handleRunInference = async () => {
+    setIsSimulating(true);
+    setSimulatedProof(null);
+    await new Promise((r) => setTimeout(r, 1200));
+    setSimulatedProof("0x816864c5b45da0e3f9ec170aa21bce724b7cc09728af754bd718351a05c9125a");
+    setIsSimulating(false);
+  };
 
   return (
-    <section className="relative pt-6 pb-8 overflow-hidden">
-      {/* Top Status Pill */}
-      <div className="flex items-center justify-center mb-5">
-        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-cyan-50 dark:bg-cyan-950/70 border border-cyan-300 dark:border-cyan-800 text-cyan-800 dark:text-cyan-300 text-xs font-mono font-semibold shadow-sm backdrop-blur-md">
-          <span className="w-2 h-2 rounded-full bg-cyan-500 animate-ping" />
-          <span>Midnight Preprod Live</span>
-          <span className="text-slate-300 dark:text-slate-700">|</span>
-          <span>Zero-Knowledge Data Clean Room</span>
-          <Sparkles className="w-3.5 h-3.5 text-amber-500" />
-        </div>
+    <section className="relative overflow-hidden pt-8 pb-16 md:pt-14 md:pb-24 border-b border-zinc-200 dark:border-zinc-800">
+      {/* Background SVG Grid Pattern (like Cyphra) */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden" aria-hidden="true">
+        <svg
+          className="absolute w-full h-full stroke-zinc-200/60 dark:stroke-zinc-800/40 [mask-image:radial-gradient(100%_100%_at_top_center,white,transparent)]"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <defs>
+            <pattern id="grid-pattern" width="36" height="36" patternUnits="userSpaceOnUse">
+              <path d="M.5 36V.5H36" fill="none" strokeWidth="1" strokeDasharray="2 4" />
+              <circle cx="0.5" cy="0.5" r="1" fill="#A1A1AA" opacity="0.6" />
+            </pattern>
+          </defs>
+          <rect width="100%" height="100%" strokeWidth="0" fill="url(#grid-pattern)" />
+        </svg>
       </div>
 
-      {/* Main Headline */}
-      <div className="text-center max-w-4xl mx-auto px-4">
-        <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black tracking-tight text-slate-900 dark:text-white leading-[1.15]">
-          AI Needs Sensitive Data.{" "}
-          <span className="block mt-2 bg-gradient-to-r from-cyan-600 via-blue-600 to-indigo-600 dark:from-cyan-400 dark:via-indigo-300 dark:to-purple-400 bg-clip-text text-transparent">
-            Institutions Cannot Risk Leaking It.
-          </span>
+      {/* Top Ambient Glow */}
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[700px] h-[350px] bg-gradient-to-b from-[#FFD400]/15 via-[#FFD400]/5 to-transparent rounded-full blur-3xl pointer-events-none -z-10" />
+
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
+        {/* Top Status Pill */}
+        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-zinc-100 dark:bg-zinc-900 hover:bg-zinc-200/80 border border-zinc-200 dark:border-zinc-800 text-xs font-medium text-zinc-800 dark:text-zinc-200 transition-colors mb-4 shadow-xs">
+          <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+          <span>Midnight Network • Official 1AM Wallet DApp Connector</span>
+          <ChevronRight className="w-3.5 h-3.5 text-zinc-500" />
+        </div>
+
+        {/* Network Selector Tabs (Cyphra style) */}
+        <div className="mb-8 flex flex-col items-center">
+          <div className="inline-flex items-center p-1.5 rounded-2xl bg-zinc-100/90 dark:bg-zinc-900/90 border border-zinc-200/90 dark:border-zinc-800 shadow-xs backdrop-blur-sm">
+            <div className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 text-xs font-mono font-bold text-zinc-500 uppercase tracking-wider">
+              <Globe className="w-3.5 h-3.5 text-zinc-700 dark:text-zinc-300" />
+              <span>Network:</span>
+            </div>
+            <div className="flex items-center gap-1">
+              <button
+                type="button"
+                onClick={() => setSelectedNetwork("preview")}
+                className={`px-4 py-1.5 rounded-xl text-xs font-mono font-bold transition-all flex items-center gap-2 ${
+                  selectedNetwork === "preview"
+                    ? "bg-[#FFD400] text-black shadow-xs"
+                    : "text-zinc-600 dark:text-zinc-400 hover:text-black dark:hover:text-white"
+                }`}
+              >
+                <span className="w-2 h-2 rounded-full bg-zinc-400" />
+                <span>Preview</span>
+                <span className="text-[9px] uppercase px-1.5 py-0.5 rounded bg-zinc-200 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 font-sans font-semibold">
+                  Testnet
+                </span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setSelectedNetwork("preprod")}
+                className={`relative px-4 py-1.5 rounded-xl text-xs font-mono font-bold transition-all flex items-center gap-2 ${
+                  selectedNetwork === "preprod"
+                    ? "bg-[#FFD400] text-black shadow-xs border border-black/15"
+                    : "text-zinc-600 dark:text-zinc-400 hover:text-black dark:hover:text-white"
+                }`}
+              >
+                <span className="w-2 h-2 rounded-full bg-emerald-600 animate-pulse" />
+                <span>Preprod</span>
+                <span className="text-[9px] uppercase px-1.5 py-0.5 rounded bg-black/10 text-black font-sans font-semibold">
+                  Active
+                </span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setSelectedNetwork("mainnet")}
+                className={`px-4 py-1.5 rounded-xl text-xs font-mono font-bold transition-all flex items-center gap-2 ${
+                  selectedNetwork === "mainnet"
+                    ? "bg-[#FFD400] text-black shadow-xs"
+                    : "text-zinc-600 dark:text-zinc-400 hover:text-black dark:hover:text-white"
+                }`}
+              >
+                <span className="w-2 h-2 rounded-full bg-zinc-400" />
+                <span>Mainnet</span>
+                <span className="text-[9px] uppercase px-1.5 py-0.5 rounded bg-zinc-200 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 font-sans font-semibold">
+                  Upcoming
+                </span>
+              </button>
+            </div>
+          </div>
+          <div className="mt-2 text-[11px] font-mono text-zinc-500 flex items-center gap-1.5">
+            <span className="text-zinc-400">Target RPC:</span>
+            <span className="text-zinc-800 dark:text-zinc-300 font-medium">
+              Multi-validator confidential staging network for Compact clean rooms
+            </span>
+          </div>
+        </div>
+
+        {/* Main Headline */}
+        <h1 className="text-4xl sm:text-6xl md:text-7xl font-bold tracking-[-0.03em] text-zinc-950 dark:text-white max-w-3xl mx-auto leading-[1.08]">
+          Confidential AI Clean Rooms for Sensitive Data
         </h1>
-        <p className="mt-5 text-base sm:text-lg text-slate-700 dark:text-slate-300 max-w-2xl mx-auto leading-relaxed">
-          <strong className="text-cyan-700 dark:text-cyan-300 font-bold">DataVault AI</strong> makes confidential AI collaboration possible on <span className="font-semibold text-indigo-700 dark:text-indigo-300">Midnight</span>. Organizations can allow advanced AI algorithms to analyze sensitive datasets with <span className="font-bold underline decoration-cyan-500 decoration-2">absolute mathematical zero-exposure guarantees</span>.
+        <p className="mt-5 text-base sm:text-lg md:text-xl text-zinc-600 dark:text-zinc-300 max-w-2xl mx-auto font-normal leading-relaxed">
+          Allow advanced AI algorithms to analyze sensitive organizational datasets with{" "}
+          <strong className="text-black dark:text-white font-bold">absolute zero-exposure mathematical guarantees</strong>{" "}
+          powered by Midnight Compact smart contracts.
         </p>
 
-        {/* Action Buttons */}
-        <div className="mt-7 flex flex-wrap items-center justify-center gap-3 sm:gap-4">
+        {/* Action Buttons (Cyphra Yellow & Crisp Secondary) */}
+        <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3.5 w-full sm:w-auto">
           <button
             onClick={onLaunchDemo}
-            className="group flex items-center gap-2.5 px-6 py-3.5 rounded-2xl bg-gradient-to-r from-cyan-600 via-blue-600 to-indigo-600 hover:from-cyan-500 hover:to-indigo-500 text-white font-bold text-sm shadow-xl shadow-cyan-500/25 transition-all transform hover:-translate-y-0.5 active:translate-y-0"
+            className="relative inline-flex items-center justify-center rounded-lg focus:outline-none select-none transition-colors overflow-hidden active:shadow-inner gap-2.5 w-full sm:w-auto text-sm px-7 py-3.5 font-bold bg-[#FFD400] text-black hover:bg-[#E5BE00] border border-black/15 shadow-sm cursor-pointer"
           >
-            <VaultIcon className="w-5 h-5" />
+            <div className="absolute inset-0 -translate-x-full hover:animate-[shimmer_1.5s_infinite] bg-gradient-to-r from-transparent via-white/20 to-transparent pointer-events-none" />
+            <VaultIcon className="w-4 h-4" />
             <span>Launch Clean Room Studio</span>
-            <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+            <ArrowRight className="w-4 h-4 ml-1" />
           </button>
-
-          <a
-            href="https://www.youtube.com/watch?v=hsI-7lmRVJc"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="group flex items-center gap-2 px-5 py-3.5 rounded-2xl bg-red-600/10 hover:bg-red-600 text-red-600 dark:text-red-400 hover:text-white border border-red-500/30 hover:border-red-600 font-bold text-sm shadow-lg shadow-red-500/10 hover:shadow-red-500/25 transition-all transform hover:-translate-y-0.5"
-          >
-            <svg className="w-4 h-4 fill-current text-red-600 dark:text-red-400 group-hover:text-white transition-colors" viewBox="0 0 24 24">
-              <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
-            </svg>
-            <span>Watch 1-Min Demo</span>
-          </a>
 
           <button
             onClick={onExploreAudit}
-            className="flex items-center gap-2 px-5 py-3.5 rounded-2xl glass-panel text-slate-800 dark:text-slate-200 font-semibold text-sm hover:border-cyan-500/50 transition-all"
+            className="relative inline-flex items-center justify-center rounded-lg select-none transition-colors overflow-hidden bg-white dark:bg-zinc-900 text-zinc-950 dark:text-white hover:bg-zinc-100 dark:hover:bg-zinc-800 border border-zinc-300 dark:border-zinc-700 shadow-sm gap-2.5 w-full sm:w-auto text-sm px-6 py-3.5 font-semibold cursor-pointer"
           >
-            <Binary className="w-4 h-4 text-cyan-600 dark:text-cyan-400" />
-            <span>Inspect Midnight ZK Proofs</span>
+            <Lock className="w-4 h-4 text-zinc-800 dark:text-zinc-200" />
+            <span>Simulate ZK Circuit</span>
           </button>
+        </div>
+
+        {/* Interactive Live Confidential Clean Room Card (Cyphra Showcase Card Style!) */}
+        <div className="mt-12 w-full max-w-md mx-auto text-left">
+          <div className="rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-5 shadow-lg relative overflow-hidden">
+            <div className="flex items-center justify-between pb-3.5 border-b border-zinc-100 dark:border-zinc-800">
+              <div className="flex items-center gap-2">
+                <div className="w-7 h-7 rounded-lg bg-[#FFD400]/20 border border-[#FFD400] flex items-center justify-center text-black">
+                  <ShieldCheck className="w-4 h-4" />
+                </div>
+                <div>
+                  <h4 className="text-xs font-bold text-black dark:text-white">Confidential Clean Room</h4>
+                  <p className="text-[10px] text-zinc-500 font-mono">Midnight PREPROD Circuit</p>
+                </div>
+              </div>
+              <span className="text-[11px] font-mono px-2 py-0.5 rounded bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800 font-semibold flex items-center gap-1">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                ZK-Encrypted
+              </span>
+            </div>
+
+            <div className="space-y-3 pt-3.5">
+              <div>
+                <label className="text-[11px] font-mono font-semibold text-zinc-500 dark:text-zinc-400 block mb-1">
+                  Target Institutional Protected Vault
+                </label>
+                <div className="p-2.5 rounded-lg bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 font-mono text-xs text-zinc-800 dark:text-zinc-200 flex items-center justify-between">
+                  <span className="truncate">Hospital-Alpha Clinical Cohort (100k Records)</span>
+                  <Lock className="w-3.5 h-3.5 text-emerald-600 shrink-0 ml-2" />
+                </div>
+              </div>
+
+              <div>
+                <div className="flex justify-between text-[11px] font-mono text-zinc-500 dark:text-zinc-400 mb-1">
+                  <label className="font-semibold">Selected ML Model</label>
+                  <span>Differential Privacy: ε = 0.5</span>
+                </div>
+                <div className="p-1.5 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-950">
+                  <select
+                    value={sampleModel}
+                    onChange={(e) => setSampleModel(e.target.value)}
+                    className="w-full bg-transparent font-mono text-xs font-bold text-black dark:text-white px-2 py-1 outline-none cursor-pointer"
+                  >
+                    <option value="DiseaseRisk-RandomForest-v1" className="dark:bg-zinc-900">
+                      DiseaseRisk-RandomForest-v1 (Approved)
+                    </option>
+                    <option value="CardioRisk-XGBoost-v2" className="dark:bg-zinc-900">
+                      CardioRisk-XGBoost-v2 (Approved)
+                    </option>
+                    <option value="Aggregate-CohortSummary" className="dark:bg-zinc-900">
+                      Cohort Demographic Summary (Approved)
+                    </option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="p-2.5 rounded-lg bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 flex items-center justify-between text-xs font-mono text-zinc-600 dark:text-zinc-400">
+                <span className="flex items-center gap-1.5">
+                  <EyeOff className="w-3.5 h-3.5 text-zinc-500" />
+                  <span>Ledger Visibility:</span>
+                </span>
+                <span className="font-bold text-black dark:text-white">Private Witness (Zero-Leak)</span>
+              </div>
+
+              {simulatedProof && (
+                <div className="p-2 rounded-lg bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800 text-[10px] font-mono text-emerald-800 dark:text-emerald-300 flex items-center justify-between">
+                  <span className="truncate">ZK Proof: {simulatedProof.slice(0, 18)}...</span>
+                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                </div>
+              )}
+
+              <button
+                onClick={handleRunInference}
+                disabled={isSimulating}
+                className="relative inline-flex items-center justify-center rounded-lg font-bold text-xs py-2.5 bg-[#FFD400] text-black hover:bg-[#E5BE00] border border-black/10 shadow-xs w-full cursor-pointer transition select-none disabled:opacity-50"
+              >
+                <div className="absolute inset-0 -translate-x-full hover:animate-[shimmer_1.5s_infinite] bg-gradient-to-r from-transparent via-white/20 to-transparent pointer-events-none" />
+                <span>{isSimulating ? "Synthesizing Proof..." : "Execute Confidential Inference"}</span>
+                <ArrowRight className="w-3.5 h-3.5 ml-1.5" />
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* 4-Stat Metric Grid (like Cyphra) */}
+        <div className="mt-14 pt-8 border-t border-zinc-200 dark:border-zinc-800 grid grid-cols-2 md:grid-cols-4 gap-3 text-xs font-mono text-zinc-700 dark:text-zinc-300 w-full">
+          <div className="p-3.5 rounded-xl bg-zinc-50/70 dark:bg-zinc-900/70 border border-zinc-200 dark:border-zinc-800 text-left shadow-xs">
+            <span className="text-zinc-500 block mb-1 font-semibold text-[10px] uppercase">
+              Shielded Records
+            </span>
+            <span className="text-black dark:text-white font-bold text-base tabular-nums">
+              100,000+
+            </span>
+          </div>
+
+          <div className="p-3.5 rounded-xl bg-zinc-50/70 dark:bg-zinc-900/70 border border-zinc-200 dark:border-zinc-800 text-left shadow-xs">
+            <span className="text-zinc-500 block mb-1 font-semibold text-[10px] uppercase">
+              WASM Prover Time
+            </span>
+            <span className="text-black dark:text-white font-bold text-base tabular-nums flex items-center gap-1">
+              1.28s <span className="text-xs font-normal text-emerald-600">(-35%)</span>
+            </span>
+          </div>
+
+          <div className="p-3.5 rounded-xl bg-zinc-50/70 dark:bg-zinc-900/70 border border-zinc-200 dark:border-zinc-800 text-left shadow-xs">
+            <span className="text-zinc-500 block mb-1 font-semibold text-[10px] uppercase">
+              Proof Engine
+            </span>
+            <span className="text-black dark:text-white font-bold text-base tabular-nums">
+              BLS12-381 ZK
+            </span>
+          </div>
+
+          <div className="p-3.5 rounded-xl bg-zinc-50/70 dark:bg-zinc-900/70 border border-zinc-200 dark:border-zinc-800 text-left shadow-xs">
+            <span className="text-zinc-500 block mb-1 font-semibold text-[10px] uppercase">
+              1AM Connector
+            </span>
+            <span className="text-black dark:text-white font-bold text-base tabular-nums flex items-center gap-1.5">
+              <span className="w-2 h-2 rounded-full bg-emerald-500" />
+              v4.0.1 Official
+            </span>
+          </div>
         </div>
       </div>
 
       {/* Interactive Privacy X-Ray Lens Component */}
-      <PrivacyXRayLens theme={theme} />
-
-      {/* Interactive 4-Step Collaborative Pipeline */}
-      <div className="max-w-5xl mx-auto px-4 mt-6">
-        <div className="glass-panel rounded-3xl p-6 sm:p-8">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6 pb-4 border-b border-slate-200 dark:border-slate-800">
-            <div>
-              <span className="text-xs font-mono font-bold uppercase tracking-wider text-cyan-600 dark:text-cyan-400 block mb-1">
-                Cryptographic Workflow
-              </span>
-              <h3 className="text-xl font-bold text-slate-900 dark:text-white">
-                How Data Moves Without Leaving The Vault
-              </h3>
-            </div>
-            <span className="text-xs text-slate-500 font-mono">
-              Click any stage to inspect logic:
-            </span>
-          </div>
-
-          {/* Interactive Steps Bar */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
-            {steps.map((s) => {
-              const Icon = s.icon;
-              const isSelected = activeStep === s.id;
-              return (
-                <button
-                  key={s.id}
-                  onClick={() => setActiveStep(s.id)}
-                  className={`p-4 rounded-2xl text-left border transition-all ${
-                    isSelected
-                      ? "bg-cyan-50 dark:bg-slate-900 border-cyan-500 shadow-md shadow-cyan-500/15"
-                      : "bg-white/60 dark:bg-slate-950/60 border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700"
-                  }`}
-                >
-                  <div className="flex items-center justify-between mb-2">
-                    <div
-                      className={`w-8 h-8 rounded-xl flex items-center justify-center ${
-                        isSelected
-                          ? "bg-cyan-600 text-white"
-                          : "bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-400"
-                      }`}
-                    >
-                      <Icon className="w-4 h-4" />
-                    </div>
-                    <span className="text-[10px] font-mono font-semibold px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-400">
-                      {s.badge}
-                    </span>
-                  </div>
-                  <h4 className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white">
-                    {s.title}
-                  </h4>
-                </button>
-              );
-            })}
-          </div>
-
-          {/* Expanded Step Details */}
-          <div className="p-4 sm:p-5 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-xs sm:text-sm text-slate-700 dark:text-slate-300 flex items-start gap-3">
-            <Zap className="w-5 h-5 text-cyan-600 dark:text-cyan-400 shrink-0 mt-0.5" />
-            <div>
-              <span className="font-bold text-slate-900 dark:text-white block mb-0.5">
-                Stage {activeStep} Technical Mechanism:
-              </span>
-              <p className="leading-relaxed">{steps[activeStep - 1].desc}</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Protocol Metrics Strip */}
-      <div className="mt-8 max-w-5xl mx-auto px-4">
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
-          <div className="glass-panel p-4 rounded-2xl text-center">
-            <span className="text-[10px] sm:text-xs text-slate-500 font-mono uppercase block mb-0.5">
-              Raw Exposure
-            </span>
-            <span className="text-2xl sm:text-3xl font-extrabold text-emerald-600 dark:text-emerald-400 font-mono">
-              0 bytes
-            </span>
-            <span className="text-[10px] text-slate-500 block mt-0.5">Shielded by Midnight</span>
-          </div>
-
-          <div className="glass-panel p-4 rounded-2xl text-center">
-            <span className="text-[10px] sm:text-xs text-slate-500 font-mono uppercase block mb-0.5">
-              Proof Generation
-            </span>
-            <span className="text-2xl sm:text-3xl font-extrabold text-cyan-600 dark:text-cyan-400 font-mono">
-              &lt; 1.0s
-            </span>
-            <span className="text-[10px] text-slate-500 block mt-0.5">Proof-Server :6300</span>
-          </div>
-
-          <div className="glass-panel p-4 rounded-2xl text-center">
-            <span className="text-[10px] sm:text-xs text-slate-500 font-mono uppercase block mb-0.5">
-              Contract Language
-            </span>
-            <span className="text-2xl sm:text-3xl font-extrabold text-indigo-600 dark:text-indigo-400 font-mono">
-              Compact
-            </span>
-            <span className="text-[10px] text-slate-500 block mt-0.5">v0.34.0 Native</span>
-          </div>
-
-          <div className="glass-panel p-4 rounded-2xl text-center">
-            <span className="text-[10px] sm:text-xs text-slate-500 font-mono uppercase block mb-0.5">
-              Target Network
-            </span>
-            <span className="text-2xl sm:text-3xl font-extrabold text-purple-600 dark:text-purple-400 font-mono">
-              Preprod
-            </span>
-            <span className="text-[10px] text-slate-500 block mt-0.5">Live Verifiable</span>
-          </div>
-        </div>
+      <div className="mt-14">
+        <PrivacyXRayLens theme={theme} />
       </div>
     </section>
   );

@@ -2,39 +2,29 @@
 
 @layer base {
   :root {
-    --bg-page: #f8fafc;
-    --bg-card: rgba(255, 255, 255, 0.85);
-    --bg-card-subtle: #f1f5f9;
-    --bg-input: #ffffff;
-    --border-color: rgba(226, 232, 240, 0.9);
-    --border-focus: #0284c7;
-    --text-primary: #0f172a;
-    --text-secondary: #334155;
-    --text-muted: #64748b;
-    --badge-bg: #e0f2fe;
-    --badge-text: #0369a1;
-    --badge-border: #bae6fd;
-    --glow-cyan: rgba(6, 182, 212, 0.15);
-    --glow-indigo: rgba(99, 102, 241, 0.15);
-    --shadow-card: 0 10px 30px -10px rgba(0, 0, 0, 0.06), 0 4px 6px -2px rgba(0, 0, 0, 0.02);
+    --bg-page: #ffffff;
+    --bg-card: #ffffff;
+    --bg-card-subtle: #fafafa;
+    --bg-input: #f4f4f5;
+    --border-color: #e4e4e7;
+    --border-focus: #000000;
+    --text-primary: #09090b;
+    --text-secondary: #52525b;
+    --text-muted: #71717a;
+    --midnight-yellow: #ffd400;
+    --midnight-yellow-hover: #e5be00;
   }
 
   .dark {
-    --bg-page: #030712;
-    --bg-card: rgba(15, 23, 42, 0.75);
-    --bg-card-subtle: #090e1a;
-    --bg-input: #050a14;
-    --border-color: rgba(30, 41, 59, 0.8);
-    --border-focus: #38bdf8;
-    --text-primary: #f8fafc;
-    --text-secondary: #cbd5e1;
-    --text-muted: #64748b;
-    --badge-bg: rgba(6, 182, 212, 0.12);
-    --badge-text: #38bdf8;
-    --badge-border: rgba(6, 182, 212, 0.3);
-    --glow-cyan: rgba(6, 182, 212, 0.25);
-    --glow-indigo: rgba(99, 102, 241, 0.25);
-    --shadow-card: 0 20px 40px -15px rgba(0, 0, 0, 0.5), 0 0 15px -3px rgba(6, 182, 212, 0.1);
+    --bg-page: #09090b;
+    --bg-card: #18181b;
+    --bg-card-subtle: #121215;
+    --bg-input: #121215;
+    --border-color: #27272a;
+    --border-focus: #ffd400;
+    --text-primary: #fafafa;
+    --text-secondary: #a1a1aa;
+    --text-muted: #71717a;
   }
 
   body {
@@ -44,62 +34,60 @@
     background-color: var(--bg-page);
     color: var(--text-primary);
     font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    transition: background-color 0.3s ease, color 0.3s ease;
+    transition: background-color 0.2s ease, color 0.2s ease;
   }
 }
 
-/* Custom High-Tech Glass and Glow Utilities */
-.glass-panel {
-  background: var(--bg-card);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid var(--border-color);
-  box-shadow: var(--shadow-card);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+/* Shimmer Animation like Cyphra */
+@keyframes shimmer {
+  100% {
+    transform: translateX(100%);
+  }
 }
 
-.glass-panel:hover {
-  border-color: var(--badge-border);
+.animate-shimmer {
+  animation: shimmer 1.8s infinite;
 }
 
-.glow-cyan {
-  box-shadow: 0 0 30px var(--glow-cyan);
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
-.glow-indigo {
-  box-shadow: 0 0 30px var(--glow-indigo);
+.animate-fadeIn {
+  animation: fadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
-.gradient-border {
-  position: relative;
+/* Subtle Grid Background Pattern */
+.bg-grid-pattern {
+  background-size: 36px 36px;
+  background-image: linear-gradient(to right, rgba(0, 0, 0, 0.04) 1px, transparent 1px),
+                    linear-gradient(to bottom, rgba(0, 0, 0, 0.04) 1px, transparent 1px);
 }
 
-.gradient-border::before {
-  content: "";
-  position: absolute;
-  inset: -1px;
-  border-radius: inherit;
-  padding: 1px;
-  background: linear-gradient(135deg, rgba(6, 182, 212, 0.5), rgba(99, 102, 241, 0.5));
-  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  -webkit-mask-composite: xor;
-  mask-composite: exclude;
-  pointer-events: none;
+.dark .bg-grid-pattern {
+  background-image: linear-gradient(to right, rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+                    linear-gradient(to bottom, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
 }
 
 /* Custom Scrollbars */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: var(--bg-page);
+  background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: var(--border-color);
-  border-radius: 4px;
+  background: #d4d4d8;
+  border-radius: 9999px;
 }
-::-webkit-scrollbar-thumb:hover {
-  background: var(--badge-border);
+.dark ::-webkit-scrollbar-thumb {
+  background: #3f3f46;
 }
