@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { Wallet, ShieldCheck, Check, Copy, ChevronDown } from "lucide-react";
 import { WalletModal } from "./WalletModal";
 
+import { AddressType } from "../hooks/useMidnight";
+
 interface WalletConnectProps {
   walletConnected: boolean;
   walletAddress: string;
@@ -10,7 +12,7 @@ interface WalletConnectProps {
   is1AMInstalled?: boolean;
   isLaceInstalled?: boolean;
   isConnecting?: boolean;
-  onConnect1AM: (customAddress?: string) => Promise<boolean>;
+  onConnect1AM: (customAddress?: string, type?: AddressType) => Promise<boolean>;
   onConnectLace: () => Promise<boolean>;
   onDisconnect: () => void;
 }

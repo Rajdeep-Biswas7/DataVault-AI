@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Lock, Cpu, ShieldCheck, RefreshCw, CheckCircle2 } from "lucide-react";
+import { Lock, Cpu, ShieldCheck, RefreshCw } from "lucide-react";
 
 export const CircuitSimulator: React.FC = () => {
   const [activeCircuit, setActiveCircuit] = useState<"register" | "compute" | "compliance">("compute");
@@ -29,35 +29,35 @@ export const CircuitSimulator: React.FC = () => {
     <section className="py-16 bg-[#FAFAFA] dark:bg-zinc-950 border-b border-zinc-200 dark:border-zinc-800 transition-colors">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-left max-w-xl mb-8">
-          <span className="text-xs font-mono font-bold uppercase tracking-wider text-zinc-500 block mb-1">
+          <span className="text-xs font-mono font-bold uppercase tracking-wider text-zinc-600 dark:text-zinc-400 block mb-1">
             Circuit Engine
           </span>
-          <h2 className="text-2xl sm:text-3xl font-bold text-black dark:text-white tracking-tight">
+          <h2 className="text-2xl sm:text-3xl font-black text-zinc-950 dark:text-white tracking-tight">
             Test Midnight Compact Cryptography Live
           </h2>
-          <p className="mt-2 text-xs sm:text-sm text-zinc-600 dark:text-zinc-400">
+          <p className="mt-2 text-xs sm:text-sm text-zinc-700 dark:text-zinc-300 font-medium">
             See how private witnesses, blinding factors, and policy rules compute in zero-knowledge without revealing patient records or hospital keys to the public.
           </p>
         </div>
 
-        <div className="rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-6 shadow-sm overflow-hidden relative">
+        <div className="rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-6 shadow-xs overflow-hidden relative">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-5 border-b border-zinc-200 dark:border-zinc-800">
             <div>
               <div className="flex items-center gap-2">
-                <div className="w-2 h-2 rounded-full bg-[#FFD400]" />
-                <span className="text-xs font-mono font-bold uppercase tracking-wider text-zinc-500">
+                <div className="w-2.5 h-2.5 rounded-full bg-[#FFD400]" />
+                <span className="text-xs font-mono font-bold uppercase tracking-wider text-zinc-600 dark:text-zinc-400">
                   Midnight Compact ZK Engine
                 </span>
               </div>
-              <h3 className="text-base font-black text-black dark:text-white tracking-tight mt-0.5">
-                Zero-Knowledge Witness Synthesis & Verification
+              <h3 className="text-base font-black text-zinc-950 dark:text-white tracking-tight mt-0.5">
+                Zero-Knowledge Witness Synthesis &amp; Verification
               </h3>
             </div>
 
             <button
               onClick={handleSimulate}
               disabled={isSimulating}
-              className="relative inline-flex items-center justify-center rounded-lg font-bold border border-black/15 shadow-sm active:shadow-inner px-3.5 py-2 gap-1.5 bg-black text-white hover:bg-zinc-800 font-mono text-xs cursor-pointer transition disabled:opacity-50"
+              className="relative inline-flex items-center justify-center rounded-lg font-bold border border-black/15 shadow-xs active:shadow-inner px-4 py-2 gap-1.5 bg-black text-white hover:bg-zinc-800 font-mono text-xs cursor-pointer transition disabled:opacity-50"
             >
               <RefreshCw className={`w-3.5 h-3.5 ${isSimulating ? "animate-spin" : ""}`} />
               <span>{isSimulating ? "Synthesizing..." : "Simulate Circuit"}</span>
@@ -72,10 +72,10 @@ export const CircuitSimulator: React.FC = () => {
                 setStatus("ready");
                 setProgress(0);
               }}
-              className={`px-3 py-1 rounded-lg text-xs font-mono font-bold transition-colors cursor-pointer ${
+              className={`px-3 py-1.5 rounded-lg text-xs font-mono font-bold transition-colors cursor-pointer ${
                 activeCircuit === "compute"
                   ? "bg-black text-[#FFD400]"
-                  : "bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-300 hover:bg-zinc-200"
+                  : "bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-200 border border-zinc-200 dark:border-zinc-700"
               }`}
             >
               requestComputation() Circuit
@@ -86,10 +86,10 @@ export const CircuitSimulator: React.FC = () => {
                 setStatus("ready");
                 setProgress(0);
               }}
-              className={`px-3 py-1 rounded-lg text-xs font-mono font-bold transition-colors cursor-pointer ${
+              className={`px-3 py-1.5 rounded-lg text-xs font-mono font-bold transition-colors cursor-pointer ${
                 activeCircuit === "register"
                   ? "bg-black text-[#FFD400]"
-                  : "bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-300 hover:bg-zinc-200"
+                  : "bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-200 border border-zinc-200 dark:border-zinc-700"
               }`}
             >
               registerDataset() Circuit
@@ -100,10 +100,10 @@ export const CircuitSimulator: React.FC = () => {
                 setStatus("ready");
                 setProgress(0);
               }}
-              className={`px-3 py-1 rounded-lg text-xs font-mono font-bold transition-colors cursor-pointer ${
+              className={`px-3 py-1.5 rounded-lg text-xs font-mono font-bold transition-colors cursor-pointer ${
                 activeCircuit === "compliance"
                   ? "bg-black text-[#FFD400]"
-                  : "bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-300 hover:bg-zinc-200"
+                  : "bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-200 border border-zinc-200 dark:border-zinc-700"
               }`}
             >
               verifyCompliance() Circuit
@@ -116,50 +116,50 @@ export const CircuitSimulator: React.FC = () => {
             <div className="p-4 rounded-xl bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 flex flex-col justify-between">
               <div>
                 <div className="flex items-center justify-between mb-3">
-                  <span className="text-[11px] font-mono font-bold text-zinc-600 dark:text-zinc-400 uppercase">
+                  <span className="text-[11px] font-mono font-bold text-zinc-800 dark:text-zinc-300 uppercase">
                     1. Private Witness
                   </span>
-                  <Lock className="w-3.5 h-3.5 text-zinc-400" />
+                  <Lock className="w-3.5 h-3.5 text-zinc-600 dark:text-zinc-400" />
                 </div>
                 <div className="space-y-2 text-xs font-mono">
-                  <div className="p-2 rounded bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 flex items-center justify-between">
-                    <span className="text-zinc-500">Enclave Key:</span>
-                    <span className="text-black dark:text-white font-semibold">●●●●●●●● (ZK)</span>
+                  <div className="p-2.5 rounded-lg bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 flex items-center justify-between">
+                    <span className="text-zinc-600 dark:text-zinc-400 font-semibold">Enclave Key:</span>
+                    <span className="text-zinc-950 dark:text-white font-bold">●●●●●●●● (ZK)</span>
                   </div>
-                  <div className="p-2 rounded bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 flex items-center justify-between">
-                    <span className="text-zinc-500">Record Count:</span>
-                    <span className="text-black dark:text-white font-semibold">100,000 (Private)</span>
+                  <div className="p-2.5 rounded-lg bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 flex items-center justify-between">
+                    <span className="text-zinc-600 dark:text-zinc-400 font-semibold">Record Count:</span>
+                    <span className="text-zinc-950 dark:text-white font-bold">100,000 (Private)</span>
                   </div>
-                  <div className="p-2 rounded bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 flex items-center justify-between">
-                    <span className="text-zinc-500">Blinding Seed:</span>
-                    <span className="text-zinc-700 dark:text-zinc-300 truncate max-w-[120px]">
+                  <div className="p-2.5 rounded-lg bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 flex items-center justify-between">
+                    <span className="text-zinc-600 dark:text-zinc-400 font-semibold">Blinding Seed:</span>
+                    <span className="text-zinc-900 dark:text-zinc-200 font-bold truncate max-w-[120px]">
                       {blindingNonce}
                     </span>
                   </div>
                 </div>
               </div>
-              <div className="mt-3 text-[10px] font-mono text-zinc-500">
+              <div className="mt-3 text-[10px] font-mono text-zinc-600 dark:text-zinc-400 font-medium">
                 *Never leaves local enclave memory (Zero-Exposure)
               </div>
             </div>
 
             {/* 2. Compact Prover */}
-            <div className="p-4 rounded-xl bg-white dark:bg-zinc-900 border-2 border-black dark:border-[#FFD400] flex flex-col justify-between relative shadow-sm">
+            <div className="p-4 rounded-xl bg-white dark:bg-zinc-900 border-2 border-black dark:border-[#FFD400] flex flex-col justify-between relative shadow-xs">
               <div>
                 <div className="flex items-center justify-between mb-3">
-                  <span className="text-[11px] font-mono font-bold text-black dark:text-white uppercase flex items-center gap-1.5">
+                  <span className="text-[11px] font-mono font-bold text-zinc-950 dark:text-white uppercase flex items-center gap-1.5">
                     <Cpu className="w-3.5 h-3.5 text-black dark:text-[#FFD400]" />
                     2. Compact Prover
                   </span>
-                  <span className="px-1.5 py-0.5 rounded bg-[#FFD400] text-black text-[10px] font-mono font-bold">
+                  <span className="px-1.5 py-0.5 rounded bg-[#FFD400] text-black text-[10px] font-mono font-black">
                     BLS12-381
                   </span>
                 </div>
                 <div className="my-4 text-center">
                   <div className="w-12 h-12 mx-auto rounded-full bg-zinc-100 dark:bg-zinc-800 border border-zinc-300 dark:border-zinc-700 flex items-center justify-center">
-                    <Cpu className="w-5 h-5 text-black dark:text-white" />
+                    <Cpu className="w-5 h-5 text-zinc-950 dark:text-white" />
                   </div>
-                  <p className="mt-2 text-xs font-mono font-bold text-black dark:text-white capitalize">
+                  <p className="mt-2 text-xs font-mono font-bold text-zinc-950 dark:text-white capitalize">
                     {status === "ready"
                       ? "Ready for Witness"
                       : status === "proving"
@@ -168,7 +168,7 @@ export const CircuitSimulator: React.FC = () => {
                   </p>
                 </div>
               </div>
-              <div className="w-full bg-zinc-100 dark:bg-zinc-800 rounded-full h-1.5 overflow-hidden">
+              <div className="w-full bg-zinc-100 dark:bg-zinc-800 rounded-full h-2 overflow-hidden">
                 <div
                   className="bg-[#FFD400] h-full transition-all duration-300"
                   style={{ width: `${progress}%` }}
@@ -180,42 +180,42 @@ export const CircuitSimulator: React.FC = () => {
             <div className="p-4 rounded-xl bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 flex flex-col justify-between">
               <div>
                 <div className="flex items-center justify-between mb-3">
-                  <span className="text-[11px] font-mono font-bold text-zinc-600 dark:text-zinc-400 uppercase">
+                  <span className="text-[11px] font-mono font-bold text-zinc-800 dark:text-zinc-300 uppercase">
                     3. Public Settlement
                   </span>
-                  <ShieldCheck className="w-3.5 h-3.5 text-black dark:text-white" />
+                  <ShieldCheck className="w-3.5 h-3.5 text-black dark:text-[#FFD400]" />
                 </div>
                 <div className="space-y-2 text-xs font-mono">
-                  <div className="p-2 rounded bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800">
-                    <span className="text-zinc-500 block text-[10px]">Verification Commitment:</span>
-                    <span className="text-black dark:text-white font-semibold break-all text-[11px]">
+                  <div className="p-2.5 rounded-lg bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800">
+                    <span className="text-zinc-600 dark:text-zinc-400 block text-[10px] font-semibold">Verification Commitment:</span>
+                    <span className="text-zinc-950 dark:text-white font-bold break-all text-[11px]">
                       0x816864c...05c9
                     </span>
                   </div>
-                  <div className="p-2 rounded bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800">
-                    <span className="text-zinc-500 block text-[10px]">Dual-State Ledger:</span>
-                    <span className="text-black dark:text-white font-semibold text-[11px]">
+                  <div className="p-2.5 rounded-lg bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800">
+                    <span className="text-zinc-600 dark:text-zinc-400 block text-[10px] font-semibold">Dual-State Ledger:</span>
+                    <span className="text-zinc-950 dark:text-white font-bold text-[11px]">
                       totalComputations += 1
                     </span>
                   </div>
-                  <div className="p-2 rounded bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 flex items-center justify-between">
-                    <span className="text-zinc-500">Policy Check:</span>
-                    <span className="text-emerald-600 font-bold">100% Satisfied</span>
+                  <div className="p-2.5 rounded-lg bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 flex items-center justify-between">
+                    <span className="text-zinc-600 dark:text-zinc-400 font-semibold">Policy Check:</span>
+                    <span className="text-emerald-700 dark:text-emerald-400 font-bold">100% Satisfied</span>
                   </div>
                 </div>
               </div>
-              <div className="mt-3 text-[10px] font-mono text-zinc-500">
+              <div className="mt-3 text-[10px] font-mono text-zinc-600 dark:text-zinc-400 font-medium">
                 *Only cryptographic commitments published to Midnight
               </div>
             </div>
           </div>
 
-          <div className="pt-3 border-t border-zinc-100 dark:border-zinc-800 flex flex-wrap items-center justify-between text-xs text-zinc-500 font-mono">
-            <span className="flex items-center gap-1.5">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+          <div className="pt-3 border-t border-zinc-200 dark:border-zinc-800 flex flex-wrap items-center justify-between text-xs text-zinc-600 dark:text-zinc-400 font-mono">
+            <span className="flex items-center gap-1.5 font-medium">
+              <span className="w-2 h-2 rounded-full bg-emerald-500" />
               Prover Time: ~1.28s (Off-chain WASM prover)
             </span>
-            <span>Security: Zero Knowledge + Perfect Soundness</span>
+            <span className="font-semibold">Security: Zero Knowledge + Perfect Soundness</span>
           </div>
         </div>
       </div>

@@ -34,10 +34,10 @@ export const ComparisonTable: React.FC = () => {
     <section className="py-16 bg-[#FAFAFA] dark:bg-zinc-950 border-b border-zinc-200 dark:border-zinc-800 transition-colors">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mb-10 text-left">
-          <span className="text-xs font-mono font-bold uppercase tracking-wider text-zinc-500 mb-1 block">
+          <span className="text-xs font-mono font-bold uppercase tracking-wider text-zinc-600 dark:text-zinc-400 mb-1 block">
             Ledger Comparison
           </span>
-          <h2 className="text-2xl sm:text-3xl font-bold text-black dark:text-white tracking-tight">
+          <h2 className="text-2xl sm:text-3xl font-black text-zinc-950 dark:text-white tracking-tight">
             Public Blockchains vs. DataVault on Midnight
           </h2>
         </div>
@@ -45,23 +45,23 @@ export const ComparisonTable: React.FC = () => {
         <div className="rounded-2xl border border-zinc-200 dark:border-zinc-800 overflow-hidden bg-white dark:bg-zinc-900 shadow-xs">
           <table className="w-full text-left border-collapse text-xs font-mono">
             <thead>
-              <tr className="border-b border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-zinc-700 dark:text-zinc-300">
-                <th className="p-4 font-bold">CAPABILITY</th>
-                <th className="p-4 font-semibold text-zinc-500">PUBLIC BLOCKCHAINS</th>
-                <th className="p-4 font-bold text-black bg-[#FFD400]/25 dark:bg-[#FFD400]/20">
+              <tr className="border-b border-zinc-200 dark:border-zinc-800 bg-zinc-100/70 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-200">
+                <th className="p-4 font-black">CAPABILITY</th>
+                <th className="p-4 font-bold text-zinc-600 dark:text-zinc-400">PUBLIC BLOCKCHAINS</th>
+                <th className="p-4 font-black text-black bg-[#FFD400]/30 dark:bg-[#FFD400]/20">
                   DATAVAULT ON MIDNIGHT
                 </th>
               </tr>
             </thead>
             <tbody className="divide-y divide-zinc-200 dark:divide-zinc-800">
               {comparisons.map((row, i) => (
-                <tr key={i} className="hover:bg-zinc-50/50 dark:hover:bg-zinc-800/40 transition-colors">
-                  <td className="p-4 font-sans font-semibold text-black dark:text-white">
+                <tr key={i} className="hover:bg-zinc-50 dark:hover:bg-zinc-800/40 transition-colors">
+                  <td className="p-4 font-sans font-bold text-zinc-950 dark:text-white">
                     {row.capability}
                   </td>
-                  <td className="p-4 text-zinc-500">
-                    <div className="flex items-center gap-1.5 text-zinc-500">
-                      <XCircle className="w-3.5 h-3.5 text-rose-500 shrink-0" />
+                  <td className="p-4 text-zinc-700 dark:text-zinc-400 font-medium">
+                    <div className="flex items-center gap-1.5">
+                      <XCircle className="w-3.5 h-3.5 text-rose-600 shrink-0" />
                       <span>{row.publicChain}</span>
                     </div>
                   </td>

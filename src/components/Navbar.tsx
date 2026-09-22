@@ -3,6 +3,8 @@ import { VaultIcon } from "./VaultIcon";
 import { WalletConnect } from "./WalletConnect";
 import { Sun, Moon, Database, BrainCircuit, History, Shield, Globe } from "lucide-react";
 
+import { AddressType } from "../hooks/useMidnight";
+
 interface NavbarProps {
   walletConnected: boolean;
   walletAddress: string;
@@ -11,7 +13,7 @@ interface NavbarProps {
   is1AMInstalled: boolean;
   isLaceInstalled: boolean;
   isConnecting: boolean;
-  onConnect1AM: (customAddress?: string) => Promise<boolean>;
+  onConnect1AM: (customAddress?: string, type?: AddressType) => Promise<boolean>;
   onConnectLace: () => Promise<boolean>;
   onDisconnect: () => void;
   activeTab: "owner" | "researcher" | "audit";
