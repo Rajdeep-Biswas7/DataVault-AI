@@ -1,0 +1,138 @@
+<svg width="1000" height="420" viewBox="0 0 1000 420" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="flowBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#09090b" />
+      <stop offset="100%" stop-color="#18181b" />
+    </linearGradient>
+    <pattern id="flowGrid" width="24" height="24" patternUnits="userSpaceOnUse">
+      <path d="M.5 24V.5H24" fill="none" stroke="#27272a" stroke-width="0.7" stroke-dasharray="1 3" />
+    </pattern>
+  </defs>
+
+  <rect width="1000" height="420" rx="16" fill="url(#flowBg)" stroke="#27272a" stroke-width="1.5" />
+  <rect width="1000" height="420" rx="16" fill="url(#flowGrid)" opacity="0.7" />
+
+  <!-- Header -->
+  <text x="40" y="44" fill="#ffffff" font-family="'JetBrains Mono', monospace" font-size="16" font-weight="800">
+    DATAVAULT AI — DUAL-STATE CONFIDENTIAL ARCHITECTURE
+  </text>
+  <text x="40" y="64" fill="#a1a1aa" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="12">
+    Zero-Knowledge Private Witnesses vs On-Chain Verifiable Ledger Commitments
+  </text>
+
+  <!-- Node 1: Hospital Data Owner -->
+  <g transform="translate(40, 100)">
+    <rect width="260" height="260" rx="14" fill="#121215" stroke="#27272a" stroke-width="1.5" />
+    <rect width="260" height="4" rx="2" fill="#3b82f6" />
+    
+    <rect x="20" y="20" width="32" height="32" rx="8" fill="#1e3a8a" />
+    <text x="62" y="36" fill="#ffffff" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="13" font-weight="700">
+      Data Owner (Hospital)
+    </text>
+    <text x="62" y="50" fill="#60a5fa" font-family="'JetBrains Mono', monospace" font-size="10">
+      Local Secure Enclave
+    </text>
+
+    <!-- Content -->
+    <g transform="translate(20, 72)">
+      <rect width="220" height="40" rx="6" fill="#18181b" stroke="#27272a" stroke-width="1" />
+      <text x="12" y="24" fill="#ef4444" font-family="'JetBrains Mono', monospace" font-size="10" font-weight="700">
+        Raw Patient PII (100k Rows)
+      </text>
+
+      <rect y="50" width="220" height="40" rx="6" fill="#18181b" stroke="#27272a" stroke-width="1" />
+      <text x="12" y="74" fill="#a1a1aa" font-family="'JetBrains Mono', monospace" font-size="10">
+        Owner Policy Key &amp; Nonce
+      </text>
+
+      <rect y="100" width="220" height="34" rx="6" fill="#052e16" stroke="#10b981" stroke-width="0.8" />
+      <text x="12" y="122" fill="#34d399" font-family="'JetBrains Mono', monospace" font-size="10" font-weight="700">
+        🔒 NEVER LEAVES ENCLAVE
+      </text>
+    </g>
+  </g>
+
+  <!-- Arrow 1 to 2 -->
+  <g transform="translate(315, 220)">
+    <line x1="0" y1="0" x2="36" y2="0" stroke="#FFD400" stroke-width="2" stroke-dasharray="4 3" />
+    <polygon points="44,0 34,-5 34,5" fill="#FFD400" />
+    <text x="-5" y="-12" fill="#FFD400" font-family="'JetBrains Mono', monospace" font-size="9" font-weight="700">
+      ZK Witness
+    </text>
+  </g>
+
+  <!-- Node 2: Midnight Compact Smart Contract -->
+  <g transform="translate(370, 100)">
+    <rect width="260" height="260" rx="14" fill="#121215" stroke="#FFD400" stroke-width="1.5" />
+    <rect width="260" height="4" rx="2" fill="#FFD400" />
+
+    <rect x="20" y="20" width="32" height="32" rx="8" fill="#FFD400" />
+    <text x="62" y="36" fill="#ffffff" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="13" font-weight="700">
+      Compact Contract
+    </text>
+    <text x="62" y="50" fill="#FFD400" font-family="'JetBrains Mono', monospace" font-size="10">
+      Midnight Preprod Network
+    </text>
+
+    <!-- Content -->
+    <g transform="translate(20, 72)">
+      <rect width="220" height="40" rx="6" fill="#18181b" stroke="#27272a" stroke-width="1" />
+      <text x="12" y="18" fill="#71717a" font-family="'JetBrains Mono', monospace" font-size="9">CIRCUIT RULES:</text>
+      <text x="12" y="32" fill="#e4e4e7" font-family="'JetBrains Mono', monospace" font-size="10" font-weight="600">
+        disclose(recordCount &gt; 0)
+      </text>
+
+      <rect y="50" width="220" height="40" rx="6" fill="#18181b" stroke="#27272a" stroke-width="1" />
+      <text x="12" y="68" fill="#71717a" font-family="'JetBrains Mono', monospace" font-size="9">PUBLIC LEDGER COUNTERS:</text>
+      <text x="12" y="82" fill="#10b981" font-family="'JetBrains Mono', monospace" font-size="10" font-weight="700">
+        totalComputations += 1
+      </text>
+
+      <rect y="100" width="220" height="34" rx="6" fill="#27272a" stroke="#3f3f46" stroke-width="0.8" />
+      <text x="12" y="122" fill="#FFD400" font-family="'JetBrains Mono', monospace" font-size="10" font-weight="700">
+        1AM Wallet Handshake
+      </text>
+    </g>
+  </g>
+
+  <!-- Arrow 2 to 3 -->
+  <g transform="translate(645, 220)">
+    <line x1="0" y1="0" x2="36" y2="0" stroke="#10b981" stroke-width="2" />
+    <polygon points="44,0 34,-5 34,5" fill="#10b981" />
+    <text x="-5" y="-12" fill="#10b981" font-family="'JetBrains Mono', monospace" font-size="9" font-weight="700">
+      Verified Proof
+    </text>
+  </g>
+
+  <!-- Node 3: AI Researcher Clean Room -->
+  <g transform="translate(700, 100)">
+    <rect width="260" height="260" rx="14" fill="#121215" stroke="#27272a" stroke-width="1.5" />
+    <rect width="260" height="4" rx="2" fill="#10b981" />
+
+    <rect x="20" y="20" width="32" height="32" rx="8" fill="#064e3b" />
+    <text x="62" y="36" fill="#ffffff" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="13" font-weight="700">
+      AI Researcher
+    </text>
+    <text x="62" y="50" fill="#34d399" font-family="'JetBrains Mono', monospace" font-size="10">
+      Clean Room Consumer
+    </text>
+
+    <!-- Content -->
+    <g transform="translate(20, 72)">
+      <rect width="220" height="40" rx="6" fill="#18181b" stroke="#27272a" stroke-width="1" />
+      <text x="12" y="24" fill="#34d399" font-family="'JetBrains Mono', monospace" font-size="10" font-weight="700">
+        Verified Model Inferences
+      </text>
+
+      <rect y="50" width="220" height="40" rx="6" fill="#18181b" stroke="#27272a" stroke-width="1" />
+      <text x="12" y="74" fill="#a1a1aa" font-family="'JetBrains Mono', monospace" font-size="10">
+        Aggregate Cohort Statistics
+      </text>
+
+      <rect y="100" width="220" height="34" rx="6" fill="#052e16" stroke="#10b981" stroke-width="0.8" />
+      <text x="12" y="122" fill="#34d399" font-family="'JetBrains Mono', monospace" font-size="10" font-weight="700">
+        🛡️ ZERO RAW ROW EXPOSURE
+      </text>
+    </g>
+  </g>
+</svg>
