@@ -105,6 +105,8 @@ DataVault AI leverages Midnight's client-side WASM prover and Compact runtime to
 ## Key Features & Innovations
 
 - 🟡 **Cyphra-Inspired Web3 Interface:** Clean, high-contrast UI featuring Midnight's official `#FFD400` yellow palette, subtle vector grid patterns, and live `Block #248,192` telemetry.
+- ☀️ **Dual High-Contrast Themes:** Ultra-crisp Light Theme and sleek Midnight Dark Theme with razor-sharp black text, clean borders, and zero washed-out elements.
+- 🔑 **1AM Multi-Asset Testnet Integration:** Native support for Midnight Shielded, Unshielded, tDUST Gas, and Cardano L1 settlement anchor with one-click copy and seamless key switching.
 - 🛡️ **Interactive Privacy X-Ray Lens:** Real-time visual comparison showing raw hospital patient records transformed into zero-knowledge shielded witnesses.
 - 💼 **Robust 1AM Wallet DApp Connector:** Native handshake with the 1AM Midnight Wallet browser extension (`window.midnight['1am']`) with automatic fallback to verified Preprod sessions.
 - 🔒 **Hidden Preprod Addresses:** Zero raw address leakage in the main UI; replaces long key strings with masked badges (`[🟢 1AM Wallet ▾]`) and clean enclave identifiers.
@@ -112,6 +114,19 @@ DataVault AI leverages Midnight's client-side WASM prover and Compact runtime to
 - 🛡️ **Crash-Proof ErrorBoundary:** Prevents blank/black screen crashes caused by browser extensions or wallet disconnects.
 - 📊 **Differential Privacy Budget Control:** Real-time tunable ($\varepsilon$) epsilon controller for mathematically bounding privacy loss.
 - 📜 **Cryptographic Audit Explorer:** Chronological ledger history tracking on-chain transactions with one-click hash copy and direct links to the [1AM Preprod Explorer](https://explorer.1am.xyz).
+
+---
+
+### 🔑 1AM Wallet Testnet Multi-Key Configuration
+
+DataVault AI is pre-configured and tested with the full suite of 1AM multi-asset keys:
+
+| Key Type | Preprod Address | Role |
+|:---|:---|:---|
+| **Midnight Shielded** | `mn_shield-addr_preprod1wl593tyd30m67lw38y896sn5rewjmkel2n5vv5k8wurcm2dkc445vu8ycpvcmg4cwphkudepzlm5hmye7hx55cysf94jx4g25s4j9rqlmvncf` | Private ZK Enclave & Transactions |
+| **Midnight Unshielded** | `mn_addr_preprod1s29kdzlg2pk0cvj64c2yh9dga0f7dc03p2ynlquypukpal663z2qgrlrtw` | Public Ledger Verifier & Contract Deployer |
+| **Midnight tDUST** | `mn_dust_preprod1wvmfhtagje9zwvc8et2lavzsnzty2h9ljwr24r9544rgpgj4789qwhuhzwd` | Network Gas & Fee Settlement |
+| **Cardano L1 Testnet** | `addr_test1qrmrz4j9x0mv4692a0nrewp7zanl0sxxcdfljyzg98td2r9l4xzkqd6g882xmpk20m9rvn75vjclkgxv9agtg5gn5l5sxcwjvn` | L1 Settlement Anchor & Bridge |
 
 ---
 
