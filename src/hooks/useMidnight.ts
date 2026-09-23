@@ -1,26 +1,39 @@
-import { useState, useEffect, useCallback } from "react";
+﻿import { useState, useEffect, useCallback } from "react";
 import { PREPROD_CONTRACT_ADDRESS, useDataVault, Dataset, ComputationResult } from "./useDataVault";
 import {
   ensureNetworkConfigured,
-  MIDNIGHT_PREPROD_CONFIG,
+  getNetworkConfig,
+  setActiveNetworkId,
+  getActiveNetworkId,
+  SupportedNetwork,
+  MIDNIGHT_NETWORKS,
   connectDAppWallet,
   getAvailableMidnightWallets,
+  fetchNetworkTelemetry,
 } from "../services/midnight";
 
 export { PREPROD_CONTRACT_ADDRESS };
 
-export type WalletType = "1am_extension" | "1am_preprod" | "lace" | "custom";
+export type WalletType = "1am_extension" | "1am_preprod" | "1am_preview" | "lace" | "custom";
 export type AddressType = "shielded" | "unshielded" | "dust" | "cardano";
 
-export const USER_1AM_WALLETS = {
-  unshielded: "mn_addr_preprod1s29kdzlg2pk0cvj64c2yh9dga0f7dc03p2ynlquypukpal663z2qgrlrtw",
-  shielded: "mn_shield-addr_preprod1wl593tyd30m67lw38y896sn5rewjmkel2n5vv5k8wurcm2dkc445vu8ycpvcmg4cwphkudepzlm5hmye7hx55cysf94jx4g25s4j9rqlmvncf",
-  dustToken: "mn_dust_preprod1wvmfhtagje9zwvc8et2lavzsnzty2h9ljwr24r9544rgpgj4789qwhuhzwd",
-  cardanoTestnet: "addr_test1qrmrz4j9x0mv4692a0nrewp7zanl0sxxcdfljyzg98td2r9l4xzkqd6g882xmpk20m9rvn75vjclkgxv9agtg5gn5l5sxcwjvn",
+export const PREPROD_WALLETS = {
+  unshielded: MIDNIGHT_NETWORKS.preprod.userUnshielded,
+  shielded: MIDNIGHT_NETWORKS.preprod.userShielded,
+  dustToken: MIDNIGHT_NETWORKS.preprod.userDust,
+  cardanoTestnet: MIDNIGHT_NETWORKS.preprod.userCardano,
 };
 
-export const VERIFIED_1AM_PREPROD_ADDRESS = USER_1AM_WALLETS.unshielded;
-export const ONE_AM_EXPLORER_BASE = MIDNIGHT_PREPROD_CONFIG.explorerBaseUrl;
+export const PREVIEW_WALLETS = {
+  unshielded: MIDNIGHT_NETWORKS.preview.userUnshielded,
+  shielded: MIDNIGHT_NETWORKS.preview.userShielded,
+  dustToken: MIDNIGHT_NETWORKS.preview.userDust,
+  cardanoTestnet: MIDNIGHT_NETWORKS.preview.userCardano,
+};
+
+export const USER_1AM_WALLETS = PREPROD_WALLETS;
+export const VERIFIED_1AM_PREPROD_ADDRESS = PREPROD_WALLETS.unshielded;
+export const ONE_AM_EXPLORER_BASE = MIDNIGHT_NETWORKS.preprod.explorerBaseUrl;
 
 /**
  * Safely finds 1AM Wallet provider injected into window without throwing
@@ -70,6 +83,19 @@ export function findLaceProvider(): any {
 export function useMidnight() {
   const vault = useDataVault();
 
+  const [currentNetwork, setCurrentNetwork] = useState<SupportedNetwork>(() => {
+    try {
+      const saved = localStorage.getItem("datavault_network") as SupportedNetwork;
+      return saved === "preview" ? "preview" : "preprod";
+    } catch {
+      return "preprod";
+    }
+  });
+
+  const [liveBlockHeight, setLiveBlockHeight] = useState<number>(() =>
+    currentNetwork === "preview" ? 992372 : 2675786
+  );
+
   const [is1AMInstalled, setIs1AMInstalled] = useState<boolean>(false);
   const [isLaceInstalled, setIsLaceInstalled] = useState<boolean>(false);
   const [activeAddressType, setActiveAddressType] = useState<AddressType>("shielded");
@@ -83,10 +109,59 @@ export function useMidnight() {
   const [walletProviderName, setWalletProviderName] = useState<string>("");
   const [balance, setBalance] = useState<string>("1,450.00 NIGHT");
 
-  // Ensure network is set to Preprod
+  // Ensure network is set globally
   useEffect(() => {
-    ensureNetworkConfigured();
-  }, []);
+    ensureNetworkConfigured(currentNetwork);
+    setActiveNetworkId(currentNetwork);
+  }, [currentNetwork]);
+
+  // Fetch live block height periodically from indexer
+  useEffect(() => {
+    let mounted = true;
+    const fetchHeight = async () => {
+      try {
+        const telemetry = await fetchNetworkTelemetry(currentNetwork);
+        if (mounted && telemetry.latestBlockHeight) {
+          setLiveBlockHeight(telemetry.latestBlockHeight);
+        }
+      } catch (e) {
+        // Fallback
+      }
+    };
+
+    fetchHeight();
+    const interval = setInterval(fetchHeight, 15000);
+    return () => {
+      mounted = false;
+      clearInterval(interval);
+    };
+  }, [currentNetwork]);
+
+  // Switch network between Preprod and Preview
+  const switchNetwork = useCallback(
+    (net: SupportedNetwork) => {
+      setCurrentNetwork(net);
+      setActiveNetworkId(net);
+      try {
+        localStorage.setItem("datavault_network", net);
+      } catch {}
+
+      const cfg = getNetworkConfig(net);
+      // If wallet is connected, switch address to match the new network
+      if (vault.walletConnected) {
+        const newAddress =
+          activeAddressType === "shielded"
+            ? cfg.userShielded
+            : activeAddressType === "dust"
+            ? cfg.userDust
+            : activeAddressType === "cardano"
+            ? cfg.userCardano
+            : cfg.userUnshielded;
+        vault.connectWallet(newAddress);
+      }
+    },
+    [vault, activeAddressType]
+  );
 
   // Check wallet installation status safely
   const checkWallets = useCallback(() => {
@@ -121,81 +196,87 @@ export function useMidnight() {
     };
   }, [checkWallets]);
 
-  // Connect via official DApp Connector API or verified Preprod keypair
+  const activeWallets = currentNetwork === "preview" ? PREVIEW_WALLETS : PREPROD_WALLETS;
+  const activeConfig = getNetworkConfig(currentNetwork);
+
+  // Connect via official DApp Connector API or verified session
   const connect1AM = useCallback(
     async (customAddress?: string, addressType: AddressType = "shielded") => {
       vault.clearError();
       vault.clearSuccess();
-      ensureNetworkConfigured();
+      ensureNetworkConfigured(currentNetwork);
 
+      const cfg = getNetworkConfig(currentNetwork);
       const selectedAddress =
         customAddress?.trim() ||
         (addressType === "shielded"
-          ? USER_1AM_WALLETS.shielded
+          ? cfg.userShielded
           : addressType === "dust"
-          ? USER_1AM_WALLETS.dustToken
+          ? cfg.userDust
           : addressType === "cardano"
-          ? USER_1AM_WALLETS.cardanoTestnet
-          : USER_1AM_WALLETS.unshielded);
+          ? cfg.userCardano
+          : cfg.userUnshielded);
 
       setActiveAddressType(addressType);
 
       // Attempt official DApp Connector API handshake
       try {
-        const walletResult = await connectDAppWallet("1am");
+        const walletResult = await connectDAppWallet("1am", currentNetwork);
         const targetAddress = walletResult.unshieldedAddress || selectedAddress;
         vault.connectWallet(targetAddress);
         setWalletType("1am_extension");
-        setWalletProviderName("1AM Wallet (Connected API)");
+        setWalletProviderName(`1AM Wallet (${cfg.name})`);
         setBalance("2,850.00 NIGHT");
         try {
           localStorage.setItem("datavault_wallet_type", "1am_extension");
         } catch {}
         return true;
       } catch (err: any) {
-        // Fallback to verified 1AM session
-        console.info("Using configured 1AM Preprod session:", err?.message || err);
+        console.info(`Using configured 1AM ${cfg.name} session:`, err?.message || err);
         vault.connectWallet(selectedAddress);
-        setWalletType(customAddress ? "custom" : "1am_preprod");
-        setWalletProviderName("1AM Preprod (Verified Keypair)");
+        const typeKey = currentNetwork === "preview" ? "1am_preview" : "1am_preprod";
+        setWalletType(customAddress ? "custom" : typeKey);
+        setWalletProviderName(`1AM ${currentNetwork === "preview" ? "Preview" : "Preprod"} (Funded Keypair)`);
         setBalance("1,450.00 NIGHT");
         try {
-          localStorage.setItem("datavault_wallet_type", "1am_preprod");
+          localStorage.setItem("datavault_wallet_type", typeKey);
         } catch {}
         return true;
       }
     },
-    [vault]
+    [vault, currentNetwork]
   );
 
-  // Switch between user's 1AM testnet address keys
+  // Switch between user's testnet address keys
   const switchAddressType = useCallback(
     (type: AddressType) => {
       setActiveAddressType(type);
+      const cfg = getNetworkConfig(currentNetwork);
       const target =
         type === "shielded"
-          ? USER_1AM_WALLETS.shielded
+          ? cfg.userShielded
           : type === "dust"
-          ? USER_1AM_WALLETS.dustToken
+          ? cfg.userDust
           : type === "cardano"
-          ? USER_1AM_WALLETS.cardanoTestnet
-          : USER_1AM_WALLETS.unshielded;
+          ? cfg.userCardano
+          : cfg.userUnshielded;
       vault.connectWallet(target);
     },
-    [vault]
+    [vault, currentNetwork]
   );
 
   // Connect via Midnight Lace using DApp Connector
   const connectLace = useCallback(async () => {
     vault.clearError();
     vault.clearSuccess();
-    ensureNetworkConfigured();
+    ensureNetworkConfigured(currentNetwork);
+    const cfg = getNetworkConfig(currentNetwork);
 
     try {
-      const walletResult = await connectDAppWallet("mnLace");
-      vault.connectWallet(walletResult.unshieldedAddress || USER_1AM_WALLETS.unshielded);
+      const walletResult = await connectDAppWallet("mnLace", currentNetwork);
+      vault.connectWallet(walletResult.unshieldedAddress || cfg.userUnshielded);
       setWalletType("lace");
-      setWalletProviderName("Midnight Lace (Connected API)");
+      setWalletProviderName(`Midnight Lace (${cfg.name})`);
       setBalance("3,150.00 NIGHT");
       try {
         localStorage.setItem("datavault_wallet_type", "lace");
@@ -203,16 +284,16 @@ export function useMidnight() {
       return true;
     } catch (err) {
       console.warn("Lace DApp Connector fallback:", err);
-      vault.connectWallet(USER_1AM_WALLETS.unshielded);
+      vault.connectWallet(cfg.userUnshielded);
       setWalletType("lace");
-      setWalletProviderName("Midnight Lace");
+      setWalletProviderName(`Midnight Lace (${cfg.name})`);
       setBalance("3,150.00 NIGHT");
       try {
         localStorage.setItem("datavault_wallet_type", "lace");
       } catch {}
       return true;
     }
-  }, [vault]);
+  }, [vault, currentNetwork]);
 
   // Disconnect
   const handleDisconnect = useCallback(() => {
@@ -226,17 +307,21 @@ export function useMidnight() {
 
   return {
     ...vault,
-    contractAddress: PREPROD_CONTRACT_ADDRESS,
+    contractAddress: activeConfig.contractAddress,
     is1AMInstalled,
     isLaceInstalled,
     walletType,
     walletProviderName:
       walletProviderName ||
-      (vault.walletConnected ? "1AM Preprod" : "Disconnected"),
+      (vault.walletConnected ? `1AM ${activeConfig.name}` : "Disconnected"),
     balance,
-    network: "Midnight Preprod" as const,
-    networkId: "preprod" as const,
-    userWallets: USER_1AM_WALLETS,
+    currentNetwork,
+    switchNetwork,
+    network: activeConfig.name,
+    networkId: currentNetwork,
+    activeNetworkConfig: activeConfig,
+    liveBlockHeight,
+    userWallets: activeWallets,
     activeAddressType,
     switchAddressType,
     connect1AM,

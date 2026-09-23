@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+﻿import React, { useState } from "react";
 import {
   Wallet,
   X,
@@ -10,8 +10,10 @@ import {
   Coins,
   Shield,
   Key,
+  Globe,
 } from "lucide-react";
-import { USER_1AM_WALLETS, AddressType } from "../hooks/useMidnight";
+import { PREPROD_WALLETS, PREVIEW_WALLETS, AddressType } from "../hooks/useMidnight";
+import { SupportedNetwork } from "../services/midnight";
 
 interface WalletModalProps {
   isOpen: boolean;
@@ -20,6 +22,8 @@ interface WalletModalProps {
   walletAddress: string;
   walletProviderName: string;
   balance: string;
+  currentNetwork?: SupportedNetwork;
+  onSwitchNetwork?: (net: SupportedNetwork) => void;
   is1AMInstalled: boolean;
   isLaceInstalled: boolean;
   isConnecting: boolean;
@@ -35,6 +39,8 @@ export const WalletModal: React.FC<WalletModalProps> = ({
   walletAddress,
   walletProviderName,
   balance,
+  currentNetwork = "preprod",
+  onSwitchNetwork,
   is1AMInstalled,
   isLaceInstalled,
   isConnecting,
@@ -58,28 +64,30 @@ export const WalletModal: React.FC<WalletModalProps> = ({
     await onConnect1AM(undefined, type);
   };
 
+  const activeWallets = currentNetwork === "preview" ? PREVIEW_WALLETS : PREPROD_WALLETS;
+
   const addressList = [
     {
       type: "shielded" as AddressType,
-      label: "Midnight Shielded (ZK Private)",
+      label: `Midnight Shielded (${currentNetwork.toUpperCase()} ZK Private)`,
       icon: Shield,
-      address: USER_1AM_WALLETS.shielded,
+      address: activeWallets.shielded,
       tag: "SHIELDED",
       tagColor: "bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300",
     },
     {
       type: "unshielded" as AddressType,
-      label: "Midnight Unshielded (Public)",
+      label: `Midnight Unshielded (${currentNetwork.toUpperCase()} Public)`,
       icon: Key,
-      address: USER_1AM_WALLETS.unshielded,
+      address: activeWallets.unshielded,
       tag: "UNSHIELDED",
       tagColor: "bg-[#FFD400] text-black font-bold",
     },
     {
       type: "dust" as AddressType,
-      label: "Midnight tDUST Gas Account",
+      label: `Midnight tDUST Gas (${currentNetwork.toUpperCase()})`,
       icon: Coins,
-      address: USER_1AM_WALLETS.dustToken,
+      address: activeWallets.dustToken,
       tag: "tDUST",
       tagColor: "bg-blue-100 text-blue-800 dark:bg-blue-950 dark:text-blue-300",
     },
@@ -87,7 +95,7 @@ export const WalletModal: React.FC<WalletModalProps> = ({
       type: "cardano" as AddressType,
       label: "Cardano Settlement Testnet",
       icon: Layers,
-      address: USER_1AM_WALLETS.cardanoTestnet,
+      address: activeWallets.cardanoTestnet,
       tag: "CARDANO L1",
       tagColor: "bg-purple-100 text-purple-800 dark:bg-purple-950 dark:text-purple-300",
     },
@@ -100,105 +108,126 @@ export const WalletModal: React.FC<WalletModalProps> = ({
         <div className="h-1.5 bg-[#FFD400]" />
 
         {/* Modal Header */}
-        <div className="flex items-center justify-between px-5 py-4 border-b border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-950/50">
+        <div className="flex items-center justify-between p-5 border-b border-zinc-200 dark:border-zinc-800">
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-lg bg-[#FFD400] flex items-center justify-center text-black font-mono font-black text-xs shadow-xs">
-              1AM
+            <div className="w-8 h-8 rounded-lg bg-black text-[#FFD400] flex items-center justify-center font-bold text-sm">
+              <Wallet className="w-4 h-4" />
             </div>
             <div>
-              <h3 className="text-sm font-bold text-zinc-950 dark:text-white flex items-center gap-1.5">
-                Midnight 1AM Wallet
-                <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-[#FFD400] text-black font-bold">
-                  PREPROD
+              <h3 className="text-sm font-bold text-zinc-900 dark:text-white flex items-center gap-2">
+                Midnight Wallet
+                <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-[#FFD400] text-black font-extrabold uppercase">
+                  {currentNetwork}
                 </span>
               </h3>
-              <p className="text-[11px] text-zinc-600 dark:text-zinc-400 font-medium">
-                {is1AMInstalled ? "Extension Connected 🟢" : "1AM Testnet Multi-Key Session"}
+              <p className="text-[11px] text-zinc-500 dark:text-zinc-400 font-mono">
+                {walletProviderName}
               </p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 rounded-lg hover:bg-zinc-200 dark:hover:bg-zinc-800 text-zinc-500 hover:text-black dark:hover:text-white transition cursor-pointer"
+            className="p-1 rounded-lg text-zinc-400 hover:text-zinc-900 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-zinc-800 transition cursor-pointer"
           >
-            <X className="w-4 h-4" />
+            <X className="w-5 h-5" />
           </button>
         </div>
 
+        {/* Network Switcher inside Modal */}
+        <div className="px-5 pt-3 pb-1 flex items-center justify-between bg-zinc-50 dark:bg-zinc-950/60 border-b border-zinc-200 dark:border-zinc-800">
+          <span className="text-[11px] font-mono font-semibold text-zinc-500 dark:text-zinc-400 flex items-center gap-1.5">
+            <Globe className="w-3.5 h-3.5" />
+            Active Network:
+          </span>
+          <div className="flex items-center gap-1 p-0.5 rounded-lg bg-zinc-200 dark:bg-zinc-800 text-[11px] font-mono font-bold">
+            <button
+              type="button"
+              onClick={() => onSwitchNetwork && onSwitchNetwork("preprod")}
+              className={`px-2.5 py-1 rounded-md transition cursor-pointer ${
+                currentNetwork === "preprod"
+                  ? "bg-[#FFD400] text-black shadow-xs"
+                  : "text-zinc-600 dark:text-zinc-400 hover:text-black dark:hover:text-white"
+              }`}
+            >
+              Preprod
+            </button>
+            <button
+              type="button"
+              onClick={() => onSwitchNetwork && onSwitchNetwork("preview")}
+              className={`px-2.5 py-1 rounded-md transition cursor-pointer ${
+                currentNetwork === "preview"
+                  ? "bg-[#FFD400] text-black shadow-xs"
+                  : "text-zinc-600 dark:text-zinc-400 hover:text-black dark:hover:text-white"
+              }`}
+            >
+              Preview
+            </button>
+          </div>
+        </div>
+
         {/* Modal Body */}
-        <div className="p-5 space-y-4 max-h-[80vh] overflow-y-auto">
-          {/* Connection Status Banner */}
-          <div className="p-3 rounded-xl bg-zinc-100 dark:bg-zinc-950 border border-zinc-300 dark:border-zinc-800 flex items-center justify-between">
+        <div className="p-5 space-y-4">
+          {/* Balance Card */}
+          <div className="p-4 rounded-xl bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 flex items-center justify-between">
             <div>
-              <span className="text-[11px] font-mono font-semibold text-zinc-600 dark:text-zinc-400 block">
-                ACTIVE STATUS
+              <span className="text-[10px] font-mono uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
+                Funded Balance ({currentNetwork.toUpperCase()})
               </span>
-              <span className="text-xs font-bold text-zinc-950 dark:text-white flex items-center gap-1.5 mt-0.5">
-                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                {walletConnected ? `${walletProviderName} Connected` : "Ready to Connect"}
-              </span>
-            </div>
-            <div className="text-right">
-              <span className="text-[10px] font-mono text-zinc-500 block">BALANCE</span>
-              <span className="text-xs font-mono font-bold text-black dark:text-[#FFD400]">
+              <div className="text-lg font-mono font-extrabold text-black dark:text-white">
                 {balance}
-              </span>
+              </div>
+            </div>
+            <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-400 text-xs font-mono font-bold">
+              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+              Connected
             </div>
           </div>
 
-          {/* 1AM Testnet Multi-Asset Addresses */}
+          {/* Address Switcher & Key Inspector */}
           <div>
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-xs font-bold text-zinc-900 dark:text-zinc-100 uppercase tracking-wider font-mono">
-                Your 1AM Testnet Addresses
-              </span>
-              <span className="text-[10px] text-zinc-500 font-mono">Click to activate / copy</span>
-            </div>
-
+            <label className="block text-[11px] font-mono font-bold uppercase tracking-wider text-zinc-600 dark:text-zinc-400 mb-2">
+              Select Enclave Key / Account
+            </label>
             <div className="space-y-2">
               {addressList.map((item) => {
-                const isSelected = activeTab === item.type;
+                const isCurrent = walletAddress === item.address;
                 const IconComponent = item.icon;
-                const isCopied = copiedKey === item.type;
-                const shortAddr = `${item.address.slice(0, 14)}...${item.address.slice(-8)}`;
-
                 return (
                   <div
                     key={item.type}
                     onClick={() => handleSelectAddress(item.type)}
                     className={`p-3 rounded-xl border transition-all cursor-pointer ${
-                      isSelected
-                        ? "bg-[#FFD400]/10 border-[#FFD400] dark:bg-[#FFD400]/5"
-                        : "bg-white dark:bg-zinc-950/70 border-zinc-200 dark:border-zinc-800 hover:border-zinc-400"
+                      isCurrent
+                        ? "border-[#FFD400] bg-[#FFD400]/5 dark:bg-[#FFD400]/10 shadow-xs"
+                        : "border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 hover:border-zinc-300 dark:hover:border-zinc-700"
                     }`}
                   >
-                    <div className="flex items-center justify-between gap-2 mb-1.5">
-                      <div className="flex items-center gap-1.5">
-                        <IconComponent className="w-3.5 h-3.5 text-zinc-700 dark:text-zinc-300" />
-                        <span className="text-xs font-bold text-zinc-950 dark:text-white font-mono">
+                    <div className="flex items-center justify-between mb-1.5">
+                      <div className="flex items-center gap-2">
+                        <IconComponent className={`w-3.5 h-3.5 ${isCurrent ? "text-amber-500" : "text-zinc-400"}`} />
+                        <span className="text-xs font-bold font-mono text-zinc-900 dark:text-zinc-100">
                           {item.label}
                         </span>
                       </div>
-                      <span className={`text-[9px] font-mono px-1.5 py-0.5 rounded ${item.tagColor}`}>
+                      <span className={`text-[9px] font-mono font-extrabold px-1.5 py-0.5 rounded ${item.tagColor}`}>
                         {item.tag}
                       </span>
                     </div>
-
-                    <div className="flex items-center justify-between p-1.5 rounded-lg bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-[11px] font-mono">
-                      <span className="text-zinc-800 dark:text-zinc-200 font-semibold truncate mr-2">
-                        {shortAddr}
-                      </span>
+                    <div className="flex items-center justify-between gap-2 mt-1">
+                      <code className="text-[10px] font-mono text-zinc-500 dark:text-zinc-400 truncate max-w-[280px]">
+                        {item.address}
+                      </code>
                       <button
                         type="button"
                         onClick={(e) => {
                           e.stopPropagation();
                           handleCopy(item.address, item.type);
                         }}
-                        className="p-1 rounded hover:bg-zinc-200 dark:hover:bg-zinc-800 text-zinc-600 dark:text-zinc-400 hover:text-black dark:hover:text-white transition shrink-0"
-                        title="Copy Full Address"
+                        className="p-1 rounded text-zinc-400 hover:text-black dark:hover:text-white transition"
+                        title="Copy Address"
                       >
-                        {isCopied ? (
-                          <Check className="w-3.5 h-3.5 text-emerald-600" />
+                        {copiedKey === item.type ? (
+                          <Check className="w-3.5 h-3.5 text-emerald-500" />
                         ) : (
                           <Copy className="w-3.5 h-3.5" />
                         )}
@@ -209,47 +238,28 @@ export const WalletModal: React.FC<WalletModalProps> = ({
               })}
             </div>
           </div>
+        </div>
 
-          {/* Action Buttons */}
-          <div className="pt-2 flex gap-2">
-            {!walletConnected ? (
-              <button
-                onClick={() => {
-                  onConnect1AM(undefined, activeTab);
-                  onClose();
-                }}
-                disabled={isConnecting}
-                className="flex-1 relative inline-flex items-center justify-center gap-2 py-2.5 px-4 rounded-lg bg-[#FFD400] hover:bg-[#E5BE00] text-black font-bold text-xs border border-black/15 shadow-xs transition cursor-pointer"
-              >
-                <Wallet className="w-3.5 h-3.5" />
-                <span>{isConnecting ? "Connecting..." : "Connect 1AM Session"}</span>
-                <ArrowRight className="w-3.5 h-3.5" />
-              </button>
-            ) : (
-              <button
-                onClick={() => {
-                  onDisconnect();
-                  onClose();
-                }}
-                className="flex-1 py-2.5 px-4 rounded-lg bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-zinc-900 dark:text-zinc-100 text-xs font-bold border border-zinc-300 dark:border-zinc-700 transition cursor-pointer"
-              >
-                Disconnect Session
-              </button>
-            )}
-
-            <button
-              onClick={onClose}
-              className="px-4 py-2.5 rounded-lg bg-white dark:bg-zinc-900 hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-700 dark:text-zinc-300 text-xs font-semibold border border-zinc-300 dark:border-zinc-800 transition cursor-pointer"
-            >
-              Close
-            </button>
-          </div>
-
-          {/* Privacy Note */}
-          <div className="pt-2 text-[10px] text-zinc-500 dark:text-zinc-400 flex items-center gap-1.5 border-t border-zinc-200 dark:border-zinc-800 font-mono">
-            <ShieldCheck className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
-            <span>Dual-State Architecture • Zero raw data leaked on-chain</span>
-          </div>
+        {/* Modal Footer */}
+        <div className="p-4 bg-zinc-50 dark:bg-zinc-950 border-t border-zinc-200 dark:border-zinc-800 flex items-center justify-between">
+          <a
+            href={`https://explorer.1am.xyz/?network=${currentNetwork}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-[11px] font-mono font-bold text-zinc-600 dark:text-zinc-400 hover:text-black dark:hover:text-[#FFD400] flex items-center gap-1 transition"
+          >
+            <span>Open 1AM {currentNetwork.toUpperCase()} Explorer</span>
+            <ArrowRight className="w-3 h-3" />
+          </a>
+          <button
+            onClick={() => {
+              onDisconnect();
+              onClose();
+            }}
+            className="px-3 py-1.5 rounded-lg text-xs font-bold bg-zinc-200 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 hover:bg-red-500 hover:text-white transition cursor-pointer"
+          >
+            Disconnect
+          </button>
         </div>
       </div>
     </div>

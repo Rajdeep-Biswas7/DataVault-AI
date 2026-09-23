@@ -12,7 +12,9 @@
     "proof-server:start": "docker compose up -d proof-server",
     "proof-server:stop": "docker compose down",
     "deploy:preprod": "tsx scripts/deploy-preprod.ts",
+    "deploy:preview": "tsx scripts/deploy-preview.ts",
     "verify:preprod": "tsx scripts/verify-preprod.ts",
+    "verify:preview": "tsx scripts/verify-preview.ts",
     "dev": "vite",
     "preview": "vite preview"
   },

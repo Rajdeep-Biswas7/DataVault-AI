@@ -1,9 +1,10 @@
-import React from "react";
+﻿import React, { useState, useRef, useEffect } from "react";
 import { VaultIcon } from "./VaultIcon";
 import { WalletConnect } from "./WalletConnect";
-import { Sun, Moon, Database, BrainCircuit, History, Shield, Globe } from "lucide-react";
+import { Sun, Moon, Database, BrainCircuit, History, Shield, ChevronDown, Check } from "lucide-react";
 
 import { AddressType } from "../hooks/useMidnight";
+import { SupportedNetwork } from "../services/midnight";
 
 interface NavbarProps {
   walletConnected: boolean;
@@ -13,6 +14,9 @@ interface NavbarProps {
   is1AMInstalled: boolean;
   isLaceInstalled: boolean;
   isConnecting: boolean;
+  currentNetwork: SupportedNetwork;
+  liveBlockHeight: number;
+  onSwitchNetwork: (net: SupportedNetwork) => void;
   onConnect1AM: (customAddress?: string, type?: AddressType) => Promise<boolean>;
   onConnectLace: () => Promise<boolean>;
   onDisconnect: () => void;
@@ -31,6 +35,9 @@ export const Navbar: React.FC<NavbarProps> = ({
   is1AMInstalled,
   isLaceInstalled,
   isConnecting,
+  currentNetwork,
+  liveBlockHeight,
+  onSwitchNetwork,
   onConnect1AM,
   onConnectLace,
   onDisconnect,
@@ -40,6 +47,19 @@ export const Navbar: React.FC<NavbarProps> = ({
   theme,
   onToggleTheme,
 }) => {
+  const [networkDropdownOpen, setNetworkDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+        setNetworkDropdownOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
   return (
     <header className="sticky top-0 z-40 w-full border-b border-zinc-200 dark:border-zinc-800 bg-white/95 dark:bg-zinc-950/95 backdrop-blur-md transition-colors">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
@@ -119,27 +139,67 @@ export const Navbar: React.FC<NavbarProps> = ({
           </nav>
         </div>
 
-        {/* Right Section: Ticker, Preprod Pill, Wallet, Theme */}
+        {/* Right Section: Ticker, Preprod/Preview Dropdown, Wallet, Theme */}
         <div className="flex items-center gap-3">
-          {/* Live Block Height Pill (like Cyphra) */}
+          {/* Live Block Height Pill (queried from active network indexer) */}
           <div className="hidden lg:flex items-center gap-2 px-2.5 py-1 rounded-md bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-[11px] font-mono text-zinc-600 dark:text-zinc-400">
             <span className="relative flex h-2 w-2">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
               <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
             </span>
-            <span>Block #248,192</span>
+            <span>Block #{liveBlockHeight ? liveBlockHeight.toLocaleString() : "..."}</span>
           </div>
 
-          {/* Network Selector Pill (Cyphra #FFD400 PREPROD Badge) */}
-          <div className="relative hidden sm:block">
+          {/* Interactive Network Selector Pill (Preprod / Preview Toggle) */}
+          <div className="relative hidden sm:block" ref={dropdownRef}>
             <button
               type="button"
-              className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] font-mono font-bold tracking-wider bg-[#FFD400] text-black border border-black/15 shadow-xs select-none"
-              title="Midnight Preprod Active Ledger"
+              onClick={() => setNetworkDropdownOpen(!networkDropdownOpen)}
+              className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] font-mono font-bold tracking-wider bg-[#FFD400] text-black border border-black/15 shadow-xs select-none hover:bg-[#E5BE00] transition cursor-pointer"
+              title="Click to Switch Midnight Network"
             >
               <span className="w-2 h-2 rounded-full bg-emerald-600 animate-pulse" />
-              <span>PREPROD</span>
+              <span>{currentNetwork.toUpperCase()}</span>
+              <ChevronDown className="w-3 h-3 text-black/70" />
             </button>
+
+            {networkDropdownOpen && (
+              <div className="absolute right-0 mt-1 w-44 rounded-xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 shadow-xl py-1 z-50 animate-fadeIn text-xs">
+                <button
+                  type="button"
+                  onClick={() => {
+                    onSwitchNetwork("preprod");
+                    setNetworkDropdownOpen(false);
+                  }}
+                  className={`w-full flex items-center justify-between px-3 py-2 text-left font-mono font-bold transition hover:bg-zinc-100 dark:hover:bg-zinc-800 ${
+                    currentNetwork === "preprod" ? "text-black dark:text-[#FFD400]" : "text-zinc-600 dark:text-zinc-400"
+                  }`}
+                >
+                  <span className="flex items-center gap-2">
+                    <span className={`w-2 h-2 rounded-full ${currentNetwork === "preprod" ? "bg-emerald-500" : "bg-zinc-400"}`} />
+                    Preprod
+                  </span>
+                  {currentNetwork === "preprod" && <Check className="w-3.5 h-3.5" />}
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    onSwitchNetwork("preview");
+                    setNetworkDropdownOpen(false);
+                  }}
+                  className={`w-full flex items-center justify-between px-3 py-2 text-left font-mono font-bold transition hover:bg-zinc-100 dark:hover:bg-zinc-800 ${
+                    currentNetwork === "preview" ? "text-black dark:text-[#FFD400]" : "text-zinc-600 dark:text-zinc-400"
+                  }`}
+                >
+                  <span className="flex items-center gap-2">
+                    <span className={`w-2 h-2 rounded-full ${currentNetwork === "preview" ? "bg-emerald-500" : "bg-zinc-400"}`} />
+                    Preview
+                  </span>
+                  {currentNetwork === "preview" && <Check className="w-3.5 h-3.5" />}
+                </button>
+              </div>
+            )}
           </div>
 
           {/* Theme Toggle Button */}
@@ -156,12 +216,14 @@ export const Navbar: React.FC<NavbarProps> = ({
             )}
           </button>
 
-          {/* 1AM Wallet Integration (Clean, hidden preprod address) */}
+          {/* 1AM Wallet Integration */}
           <WalletConnect
             walletConnected={walletConnected}
             walletAddress={walletAddress}
             walletProviderName={walletProviderName}
             balance={balance}
+            currentNetwork={currentNetwork}
+            onSwitchNetwork={onSwitchNetwork}
             is1AMInstalled={is1AMInstalled}
             isLaceInstalled={isLaceInstalled}
             isConnecting={isConnecting}

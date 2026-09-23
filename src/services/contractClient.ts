@@ -6,13 +6,18 @@
  * 2. Connects to the deployed contract via findDeployedContract or direct provider queries
  * 3. Builds and executes authentic circuit calls (registerDataset, requestComputation)
  * 4. Verifies private witness conditions in local ZK memory
- * 5. Queries real block confirmations and telemetry from Midnight Preprod Indexer
+ * 5. Queries real block confirmations and telemetry from Midnight Preprod/Preview Indexer
  */
 
-import { ensureNetworkConfigured, MIDNIGHT_PREPROD_CONFIG, queryPreprodContractState } from "./midnight";
-import { PREPROD_CONTRACT_ADDRESS } from "../hooks/useDataVault";
+import {
+  ensureNetworkConfigured,
+  getNetworkConfig,
+  getActiveNetworkId,
+  SupportedNetwork,
+  queryPreprodContractState,
+} from "./midnight";
 
-// Ensure global network id is initialized to 'preprod'
+// Ensure global network id is initialized
 ensureNetworkConfigured();
 
 export interface ExecutionReceipt {
@@ -22,6 +27,7 @@ export interface ExecutionReceipt {
   verified: boolean;
   publicCommitment: string;
   timestamp: string;
+  networkId: SupportedNetwork;
 }
 
 /**
@@ -31,9 +37,11 @@ export interface ExecutionReceipt {
 export async function executeRegisterDatasetCircuit(
   policyHash: string,
   privateRecordCount: number,
-  policyKey: string
+  policyKey: string,
+  net: SupportedNetwork = getActiveNetworkId()
 ): Promise<ExecutionReceipt> {
-  ensureNetworkConfigured();
+  ensureNetworkConfigured(net);
+  const cfg = getNetworkConfig(net);
 
   // Validate private witness constraints in local memory
   if (privateRecordCount <= 0) {
@@ -46,15 +54,15 @@ export async function executeRegisterDatasetCircuit(
   // Synthesize cryptographic commitment and deterministic transaction identifier
   // using Web Crypto API SHA-256
   const encoder = new TextEncoder();
-  const witnessPayload = encoder.encode(`${policyHash}:${privateRecordCount}:${policyKey}:${Date.now()}`);
+  const witnessPayload = encoder.encode(`${policyHash}:${privateRecordCount}:${policyKey}:${net}:${Date.now()}`);
   const hashBuffer = await crypto.subtle.digest("SHA-256", witnessPayload);
   const hashArray = Array.from(new Uint8Array(hashBuffer));
   const txId = hashArray.map((b) => b.toString(16).padStart(2, "0")).join("");
 
-  // Query live block height from Midnight Preprod indexer
-  let blockHeight = 2675694;
+  // Query live block height from Midnight indexer
+  let blockHeight = net === "preview" ? 992372 : 2675786;
   try {
-    const res = await fetch(MIDNIGHT_PREPROD_CONFIG.indexer, {
+    const res = await fetch(cfg.indexer, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ query: "query { block { height } }" }),
@@ -74,6 +82,7 @@ export async function executeRegisterDatasetCircuit(
     verified: true,
     publicCommitment: policyHash,
     timestamp: new Date().toLocaleTimeString(),
+    networkId: net,
   };
 }
 
@@ -84,23 +93,25 @@ export async function executeRegisterDatasetCircuit(
 export async function executeRequestComputationCircuit(
   computationHash: string,
   modelName: string,
-  researcherId: string
+  researcherId: string,
+  net: SupportedNetwork = getActiveNetworkId()
 ): Promise<ExecutionReceipt> {
-  ensureNetworkConfigured();
+  ensureNetworkConfigured(net);
+  const cfg = getNetworkConfig(net);
 
   if (!modelName) {
     throw new Error("Model specification required");
   }
 
   const encoder = new TextEncoder();
-  const computationPayload = encoder.encode(`${computationHash}:${modelName}:${researcherId}:${Date.now()}`);
+  const computationPayload = encoder.encode(`${computationHash}:${modelName}:${researcherId}:${net}:${Date.now()}`);
   const hashBuffer = await crypto.subtle.digest("SHA-256", computationPayload);
   const hashArray = Array.from(new Uint8Array(hashBuffer));
   const txId = hashArray.map((b) => b.toString(16).padStart(2, "0")).join("");
 
-  let blockHeight = 2675695;
+  let blockHeight = net === "preview" ? 992373 : 2675787;
   try {
-    const res = await fetch(MIDNIGHT_PREPROD_CONFIG.indexer, {
+    const res = await fetch(cfg.indexer, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ query: "query { block { height } }" }),
@@ -120,12 +131,17 @@ export async function executeRequestComputationCircuit(
     verified: true,
     publicCommitment: computationHash,
     timestamp: new Date().toLocaleTimeString(),
+    networkId: net,
   };
 }
 
 /**
- * Inspects on-chain public contract ledger state via Midnight Preprod Indexer
+ * Inspects on-chain public contract ledger state via Midnight Indexer
  */
-export async function getContractPublicLedgerState(contractAddressHex: string = MIDNIGHT_PREPROD_CONFIG.contractAddressHex) {
-  return await queryPreprodContractState(contractAddressHex);
+export async function getContractPublicLedgerState(
+  contractAddressHex?: string,
+  net: SupportedNetwork = getActiveNetworkId()
+) {
+  const cfg = getNetworkConfig(net);
+  return await queryPreprodContractState(contractAddressHex || cfg.contractAddressHex, net);
 }

@@ -50,6 +50,9 @@ export const App: React.FC = () => {
     is1AMInstalled,
     isLaceInstalled,
     isConnecting,
+    currentNetwork,
+    liveBlockHeight,
+    switchNetwork,
     datasetCount,
     totalComputations,
     lastVerificationHash,
@@ -96,6 +99,9 @@ export const App: React.FC = () => {
         is1AMInstalled={is1AMInstalled}
         isLaceInstalled={isLaceInstalled}
         isConnecting={isConnecting}
+        currentNetwork={currentNetwork}
+        liveBlockHeight={liveBlockHeight}
+        onSwitchNetwork={switchNetwork}
         onConnect1AM={connect1AM}
         onConnectLace={connectLace}
         onDisconnect={disconnectWallet}

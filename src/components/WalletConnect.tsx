@@ -1,14 +1,17 @@
-import React, { useState } from "react";
-import { Wallet, ShieldCheck, Check, Copy, ChevronDown } from "lucide-react";
+﻿import React, { useState } from "react";
+import { Wallet, ChevronDown } from "lucide-react";
 import { WalletModal } from "./WalletModal";
 
 import { AddressType } from "../hooks/useMidnight";
+import { SupportedNetwork } from "../services/midnight";
 
 interface WalletConnectProps {
   walletConnected: boolean;
   walletAddress: string;
   walletProviderName?: string;
   balance?: string;
+  currentNetwork?: SupportedNetwork;
+  onSwitchNetwork?: (net: SupportedNetwork) => void;
   is1AMInstalled?: boolean;
   isLaceInstalled?: boolean;
   isConnecting?: boolean;
@@ -20,8 +23,10 @@ interface WalletConnectProps {
 export const WalletConnect: React.FC<WalletConnectProps> = ({
   walletConnected,
   walletAddress,
-  walletProviderName = "1AM Preprod",
+  walletProviderName = "1AM Wallet",
   balance = "1,450.00 NIGHT",
+  currentNetwork = "preprod",
+  onSwitchNetwork,
   is1AMInstalled = false,
   isLaceInstalled = false,
   isConnecting = false,
@@ -36,11 +41,11 @@ export const WalletConnect: React.FC<WalletConnectProps> = ({
       <div className="relative inline-flex items-center">
         {walletConnected ? (
           <div className="flex items-center gap-1.5 p-1 rounded-xl bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800">
-            {/* Clean 1AM Wallet Pill (No raw preprod address shown on the navbar) */}
+            {/* Clean 1AM Wallet Pill */}
             <button
               onClick={() => setIsModalOpen(true)}
               className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#FFD400] hover:bg-[#E5BE00] text-black text-xs font-mono font-bold transition shadow-xs cursor-pointer"
-              title="Click to view 1AM Wallet Details"
+              title="Click to view Wallet Details"
             >
               <span className="w-2 h-2 rounded-full bg-emerald-600 animate-pulse" />
               <span>1AM Wallet</span>
@@ -50,7 +55,7 @@ export const WalletConnect: React.FC<WalletConnectProps> = ({
             {/* Quick Disconnect */}
             <button
               onClick={onDisconnect}
-              className="px-2.5 py-1.5 text-xs font-semibold rounded-lg bg-white dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-700 transition"
+              className="px-2.5 py-1.5 text-xs font-semibold rounded-lg bg-white dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-700 transition cursor-pointer"
               title="Disconnect Wallet"
             >
               Disconnect
@@ -77,6 +82,8 @@ export const WalletConnect: React.FC<WalletConnectProps> = ({
         walletAddress={walletAddress}
         walletProviderName={walletProviderName}
         balance={balance}
+        currentNetwork={currentNetwork}
+        onSwitchNetwork={onSwitchNetwork}
         is1AMInstalled={is1AMInstalled}
         isLaceInstalled={isLaceInstalled}
         isConnecting={isConnecting}
