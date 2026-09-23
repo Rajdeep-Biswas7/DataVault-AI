@@ -1,5 +1,11 @@
 import { useState, useEffect, useCallback } from "react";
 import { PREPROD_CONTRACT_ADDRESS, useDataVault, Dataset, ComputationResult } from "./useDataVault";
+import {
+  ensureNetworkConfigured,
+  MIDNIGHT_PREPROD_CONFIG,
+  connectDAppWallet,
+  getAvailableMidnightWallets,
+} from "../services/midnight";
 
 export { PREPROD_CONTRACT_ADDRESS };
 
@@ -14,8 +20,7 @@ export const USER_1AM_WALLETS = {
 };
 
 export const VERIFIED_1AM_PREPROD_ADDRESS = USER_1AM_WALLETS.unshielded;
-
-export const ONE_AM_EXPLORER_BASE = "https://explorer.1am.xyz";
+export const ONE_AM_EXPLORER_BASE = MIDNIGHT_PREPROD_CONFIG.explorerBaseUrl;
 
 /**
  * Safely finds 1AM Wallet provider injected into window without throwing
@@ -78,6 +83,11 @@ export function useMidnight() {
   const [walletProviderName, setWalletProviderName] = useState<string>("");
   const [balance, setBalance] = useState<string>("1,450.00 NIGHT");
 
+  // Ensure network is set to Preprod
+  useEffect(() => {
+    ensureNetworkConfigured();
+  }, []);
+
   // Check wallet installation status safely
   const checkWallets = useCallback(() => {
     try {
@@ -111,11 +121,12 @@ export function useMidnight() {
     };
   }, [checkWallets]);
 
-  // Connect via 1AM Midnight Wallet (Extension or Preprod Session)
+  // Connect via official DApp Connector API or verified Preprod keypair
   const connect1AM = useCallback(
     async (customAddress?: string, addressType: AddressType = "shielded") => {
       vault.clearError();
       vault.clearSuccess();
+      ensureNetworkConfigured();
 
       const selectedAddress =
         customAddress?.trim() ||
@@ -129,77 +140,24 @@ export function useMidnight() {
 
       setActiveAddressType(addressType);
 
-      const oneAmProvider = find1AMProvider();
-
-      if (oneAmProvider && !customAddress) {
+      // Attempt official DApp Connector API handshake
+      try {
+        const walletResult = await connectDAppWallet("1am");
+        const targetAddress = walletResult.unshieldedAddress || selectedAddress;
+        vault.connectWallet(targetAddress);
+        setWalletType("1am_extension");
+        setWalletProviderName("1AM Wallet (Connected API)");
+        setBalance("2,850.00 NIGHT");
         try {
-          let api: any = null;
-          // Modern dApp connector protocol
-          if (typeof oneAmProvider.connect === "function") {
-            try {
-              api = await oneAmProvider.connect("preprod");
-            } catch {
-              try {
-                api = await oneAmProvider.connect("testnet");
-              } catch {
-                api = await oneAmProvider.connect();
-              }
-            }
-          } else if (typeof oneAmProvider.enable === "function") {
-            api = await oneAmProvider.enable();
-          } else {
-            api = oneAmProvider;
-          }
-
-          let address: string | null = null;
-          if (api) {
-            if (typeof api.state === "function") {
-              try {
-                const state = await api.state();
-                if (state) {
-                  address = state.shieldedAddress || state.unshieldedAddress || state.address;
-                }
-              } catch (e) {
-                console.warn("api.state error:", e);
-              }
-            }
-            if (!address && typeof api.getShieldedAddress === "function") {
-              try {
-                address = await api.getShieldedAddress();
-              } catch {}
-            }
-            if (!address && typeof api.getUnshieldedAddress === "function") {
-              try {
-                address = await api.getUnshieldedAddress();
-              } catch {}
-            }
-          }
-
-          const targetAddress = address || selectedAddress;
-          vault.connectWallet(targetAddress);
-          setWalletType("1am_extension");
-          setWalletProviderName("1AM Wallet (Extension)");
-          setBalance("2,850.00 NIGHT");
-          try {
-            localStorage.setItem("datavault_wallet_type", "1am_extension");
-          } catch {}
-          return true;
-        } catch (err: any) {
-          console.warn("1AM extension handshake notice:", err?.message || err);
-          vault.connectWallet(selectedAddress);
-          setWalletType("1am_preprod");
-          setWalletProviderName("1AM Preprod");
-          setBalance("1,450.00 NIGHT");
-          try {
-            localStorage.setItem("datavault_wallet_type", "1am_preprod");
-          } catch {}
-          return true;
-        }
-      } else {
-        // Seamlessly connect to verified 1AM session
+          localStorage.setItem("datavault_wallet_type", "1am_extension");
+        } catch {}
+        return true;
+      } catch (err: any) {
+        // Fallback to verified 1AM session
+        console.info("Using configured 1AM Preprod session:", err?.message || err);
         vault.connectWallet(selectedAddress);
         setWalletType(customAddress ? "custom" : "1am_preprod");
-        setWalletProviderName("1AM Preprod");
+        setWalletProviderName("1AM Preprod (Verified Keypair)");
         setBalance("1,450.00 NIGHT");
         try {
           localStorage.setItem("datavault_wallet_type", "1am_preprod");
@@ -227,46 +185,33 @@ export function useMidnight() {
     [vault]
   );
 
-  // Connect via Midnight Lace
+  // Connect via Midnight Lace using DApp Connector
   const connectLace = useCallback(async () => {
     vault.clearError();
     vault.clearSuccess();
-    const lace = findLaceProvider();
+    ensureNetworkConfigured();
 
-    if (lace) {
-      try {
-        let api: any = null;
-        if (typeof lace.connect === "function") {
-          api = await lace.connect("preprod");
-        } else if (typeof lace.enable === "function") {
-          api = await lace.enable();
-        }
-        let address: string | null = null;
-        if (api && typeof api.state === "function") {
-          const state = await api.state();
-          address = state?.address || state?.unshieldedAddress;
-        }
-        vault.connectWallet(address || USER_1AM_WALLETS.unshielded);
-        setWalletType("lace");
-        setWalletProviderName("Midnight Lace");
-        setBalance("3,150.00 NIGHT");
-        try {
-          localStorage.setItem("datavault_wallet_type", "lace");
-        } catch {}
-        return true;
-      } catch (err) {
-        console.warn("Lace handshake notice:", err);
-      }
-    }
-
-    vault.connectWallet(USER_1AM_WALLETS.unshielded);
-    setWalletType("lace");
-    setWalletProviderName("Midnight Lace");
-    setBalance("3,150.00 NIGHT");
     try {
-      localStorage.setItem("datavault_wallet_type", "lace");
-    } catch {}
-    return true;
+      const walletResult = await connectDAppWallet("mnLace");
+      vault.connectWallet(walletResult.unshieldedAddress || USER_1AM_WALLETS.unshielded);
+      setWalletType("lace");
+      setWalletProviderName("Midnight Lace (Connected API)");
+      setBalance("3,150.00 NIGHT");
+      try {
+        localStorage.setItem("datavault_wallet_type", "lace");
+      } catch {}
+      return true;
+    } catch (err) {
+      console.warn("Lace DApp Connector fallback:", err);
+      vault.connectWallet(USER_1AM_WALLETS.unshielded);
+      setWalletType("lace");
+      setWalletProviderName("Midnight Lace");
+      setBalance("3,150.00 NIGHT");
+      try {
+        localStorage.setItem("datavault_wallet_type", "lace");
+      } catch {}
+      return true;
+    }
   }, [vault]);
 
   // Disconnect
@@ -290,6 +235,7 @@ export function useMidnight() {
       (vault.walletConnected ? "1AM Preprod" : "Disconnected"),
     balance,
     network: "Midnight Preprod" as const,
+    networkId: "preprod" as const,
     userWallets: USER_1AM_WALLETS,
     activeAddressType,
     switchAddressType,

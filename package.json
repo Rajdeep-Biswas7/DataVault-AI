@@ -11,11 +11,14 @@
     "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js tests/counter.test.ts --no-coverage",
     "proof-server:start": "docker compose up -d proof-server",
     "proof-server:stop": "docker compose down",
+    "deploy:preprod": "tsx scripts/deploy-preprod.ts",
+    "verify:preprod": "tsx scripts/verify-preprod.ts",
     "dev": "vite",
     "preview": "vite preview"
   },
   "dependencies": {
     "@midnight-ntwrk/compact-runtime": "0.19.0",
+    "@midnight-ntwrk/dapp-connector-api": "^4.0.1",
     "@midnight-ntwrk/midnight-js-contracts": "4.1.1",
     "@midnight-ntwrk/midnight-js-http-client-proof-provider": "4.1.1",
     "@midnight-ntwrk/midnight-js-indexer-public-data-provider": "4.1.1",
