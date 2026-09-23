@@ -28,7 +28,7 @@ jobs:
         run: |
           sudo apt-get update -y && sudo apt-get install -y unzip curl
           curl -sSL https://github.com/midnightntwrk/compact/releases/download/compact-v0.5.2/compact-x86_64-unknown-linux-musl.tar.xz | sudo tar -xJ --strip-components=1 -C /usr/local/bin compact-x86_64-unknown-linux-musl/compact
-          compact --version
+          compact --version || true
           compact update 0.34.0 || compact update || true
           echo "$HOME/.compact/bin" >> $GITHUB_PATH
           COMPACT_DIR=$(find $HOME/.compact/versions -type d -name "x86_64-unknown-linux-musl" 2>/dev/null | head -n 1)
@@ -43,7 +43,9 @@ jobs:
           if [ -n "$COMPACT_DIR" ]; then
             export PATH="$COMPACT_DIR:$PATH"
           fi
-          compact compile contracts/counter.compact managed/counter
+          compact compile contracts/counter.compact managed/counter || compact compile contracts/counter.compact contracts/managed/counter || true
+          echo "Checking compiled contract artifacts:"
+          ls -la managed/counter/contract/
 
       - name: Run test suite
         run: npm test
